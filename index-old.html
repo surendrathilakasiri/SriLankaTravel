@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sri Lanka Travel | Discover the Pearl of the Indian Ocean</title>
+  <meta name="description" content="Your complete guide to Sri Lanka — stunning destinations, cuisine, culture, visa info, and travel tips. Beaches, wildlife, ancient temples, tea country & more." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Premium homepage styles (you can move to styles.css later) -->
+  <style>
+    :root{
+      --bg:#0b1220;
+      --ink:#071423;
+      --text:#132235;
+      --muted:#5b6773;
+      --line:#e7edf3;
+      --card:#ffffff;
+      --brand:#0a3d62;
+      --brand2:#1e5f8c;
+      --accent:#ffd166;
+      --shadow: 0 16px 45px rgba(0,0,0,.14);
+      --shadow2: 0 10px 28px rgba(0,0,0,.10);
+      --radius: 18px;
+    }
+
+    /* HEADER polish */
+    .site-header{ position: sticky; top:0; z-index:50; backdrop-filter: blur(10px); }
+    .site-header.scrolled{ box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+
+    /* HERO */
+    .hero-pro{
+      position: relative;
+      min-height: calc(100vh - 70px);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        linear-gradient(120deg, rgba(8,16,32,.92), rgba(10,61,98,.55)),
+        url("assets/images/home-hero.jpg") center/cover no-repeat;
+      color: #fff;
+    }
+    .hero-pro::after{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.18), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(255,209,102,.16), transparent 42%),
+        linear-gradient(to top, rgba(11,18,32,.95), rgba(11,18,32,0) 60%);
+      pointer-events:none;
+    }
+
+    .hero-inner{
+      position: relative;
+      width: min(1120px, 92vw);
+      padding: 40px 0 70px;
+    }
+
+    .hero-badges{
+      display:flex; flex-wrap:wrap; gap:10px;
+      align-items:center;
+      margin-bottom: 14px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+    .pill b{ color: var(--accent); }
+
+    .hero-title{
+      font-size: clamp(38px, 5vw, 68px);
+      line-height: 1.02;
+      margin: 0 0 12px;
+      letter-spacing: .2px;
+    }
+    .hero-subtitle{
+      max-width: 760px;
+      margin: 0 0 22px;
+      font-size: clamp(15px, 1.5vw, 18px);
+      color: rgba(255,255,255,.92);
+      line-height: 1.65;
+    }
+
+    .hero-cta{
+      display:flex; flex-wrap:wrap; gap:12px;
+      margin: 18px 0 18px;
+    }
+    .btn-pro{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding: 13px 16px;
+      border-radius: 14px;
+      font-weight: 900;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+    .btn-pro:hover{ transform: translateY(-2px); opacity:.96; }
+    .btn-primary-pro{
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#fff;
+      box-shadow: 0 14px 40px rgba(10,61,98,.35);
+    }
+    .btn-secondary-pro{
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      border-color: rgba(255,255,255,.25);
+    }
+
+    /* TRIP BAR / ITINERARY FORM */
+    .tripbar{
+      margin-top: 22px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 18px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1.3fr .7fr .7fr .9fr auto;
+      gap: 10px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 60px rgba(0,0,0,.22);
+    }
+    .tripbar .field{
+      display:flex; flex-direction:column; gap:6px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .tripbar label{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.85);
+    }
+    .tripbar input, .tripbar select{
+      background: transparent;
+      border:none;
+      outline:none;
+      color:#fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .tripbar input::placeholder{ color: rgba(255,255,255,.72); }
+    .tripbar option{ color:#111; }
+    .tripbar .go{
+      border:none;
+      border-radius: 14px;
+      font-weight: 1000;
+      cursor:pointer;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, #ffd166, #ffb703);
+      color:#1a1a1a;
+      transition: transform .2s ease;
+      box-shadow: 0 12px 35px rgba(255,209,102,.28);
+      white-space: nowrap;
+    }
+    .tripbar .go:hover{ transform: translateY(-2px); }
+
+    /* Itinerary result container (below hero) */
+    .hero-results{
+      margin-top: 14px;
+      display: grid;
+      gap: 12px;
+    }
+    .status{
+      color: rgba(255,255,255,.85);
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .result-card{
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 18px;
+      backdrop-filter: blur(12px);
+      padding: 14px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.18);
+    }
+    .result-card h3{
+      margin: 0 0 6px;
+      font-size: 18px;
+      color: #fff;
+    }
+    .result-card p{
+      margin: 0 0 10px;
+      color: rgba(255,255,255,.88);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .day{
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .day b{ color:#fff; }
+    .day ul{
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: rgba(255,255,255,.90);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .day .meta{
+      margin-top: 6px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: rgba(255,255,255,.82);
+    }
+    .tips{
+      margin-top: 12px;
+      border-top: 1px dashed rgba(255,255,255,.25);
+      padding-top: 10px;
+    }
+    .tips h4{ margin: 0 0 8px; color:#fff; }
+    .tips ul{
+      margin:0;
+      padding-left: 18px;
+      color: rgba(255,255,255,.90);
+      line-height:1.6;
+      font-size: 14px;
+    }
+
+    /* MAIN sections */
+    .wrap{
+      background: #f6f8fb;
+      padding: 68px 18px;
+    }
+    .container{
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .section-header{
+      text-align:center;
+      margin-bottom: 26px;
+    }
+    .section-label{
+      margin:0 0 10px;
+      color: var(--brand2);
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+    .section-title{
+      margin:0 0 10px;
+      font-size: clamp(24px, 2.2vw, 36px);
+      color: var(--ink);
+    }
+    .section-desc{
+      margin: 0 auto;
+      max-width: 860px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* FEATURE tiles */
+    .features{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .feature{
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow2);
+      padding: 16px;
+      text-align:left;
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+    }
+    .feature .icon{
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg, rgba(10,61,98,.12), rgba(30,95,140,.10));
+      border: 1px solid rgba(10,61,98,.14);
+      font-size: 20px;
+      flex: 0 0 44px;
+    }
+    .feature h3{ margin:0 0 6px; font-size: 15px; color: var(--ink); }
+    .feature p{ margin:0; color: var(--muted); font-size: 13.5px; line-height: 1.55; }
+
+    /* DESTINATION cards */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .card-pro{
+      background:#fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow:hidden;
+      box-shadow: var(--shadow2);
+      transition: transform .18s ease;
+    }
+    .card-pro:hover{ transform: translateY(-4px); }
+    .card-pro .img{
+      position: relative;
+      height: 200px;
+      background: #dfe7ef;
+      overflow:hidden;
+    }
+    .card-pro img{
+      width:100%; height:100%;
+      object-fit: cover;
+      transform: scale(1.02);
+    }
+    .badge{
+      position:absolute;
+      top: 12px; left: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.45);
+      color:#fff;
+      border: 1px solid rgba(255,255,255,.22);
+      font-size: 12px;
+      font-weight: 900;
+      backdrop-filter: blur(10px);
+    }
+    .card-pro .body{
+      padding: 16px;
+    }
+    .card-pro h3{ margin:0 0 8px; color: var(--ink); font-size: 18px; }
+    .meta-row{
+      display:flex; gap: 10px; flex-wrap:wrap;
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+    .card-pro p{ margin:0 0 12px; color: var(--muted); line-height: 1.65; font-size: 14px; }
+    .link{
+      display:inline-flex; align-items:center; gap: 8px;
+      color: var(--brand);
+      text-decoration:none;
+      font-weight: 900;
+      font-size: 14px;
+    }
+    .link:hover{ text-decoration: underline; }
+
+    /* EXPERIENCES */
+    .experience{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+      align-items: stretch;
+    }
+    .experience .panel{
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow2);
+      background: #fff;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .experience .panel .photo{
+      background:
+        linear-gradient(120deg, rgba(10,61,98,.25), rgba(10,61,98,.10)),
+        url("assets/images/experience.jpg") center/cover no-repeat;
+      min-height: 280px;
+    }
+    .experience .panel .text{
+      padding: 18px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap: 10px;
+    }
+    .experience .chips{
+      display:flex; flex-wrap:wrap; gap: 8px;
+    }
+    .chip{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fbfdff;
+      font-weight: 900;
+      color: var(--text);
+      font-size: 12px;
+    }
+    .experience .side{
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow2);
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      padding: 18px;
+    }
+    .itins{
+      display:grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .itin{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 10px;
+      text-decoration:none;
+      color: inherit;
+    }
+    .itin b{ color: var(--ink); }
+    .itin small{ display:block; color: var(--muted); margin-top: 3px; font-weight:700; }
+
+    /* TESTIMONIALS */
+    .testimonials{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .quote{
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow2);
+      background: #fff;
+      padding: 18px;
+    }
+    .quote p{ margin: 0 0 12px; color: var(--text); line-height: 1.7; font-size: 15px; }
+    .quote .who{ display:flex; align-items:center; gap: 10px; }
+    .avatar{
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(10,61,98,.25), rgba(255,209,102,.25));
+      border: 1px solid rgba(10,61,98,.15);
+    }
+    .who b{ display:block; color: var(--ink); }
+    .who small{ color: var(--muted); font-weight:700; }
+
+    .newsletter{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.18);
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: 0 20px 55px rgba(10,61,98,.25);
+      color:#fff;
+      padding: 18px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .newsletter h3{ margin:0; font-size: 18px; }
+    .newsletter p{ margin:0; opacity:.92; line-height: 1.6; font-size: 14px; }
+    .news-form{
+      display:flex; gap: 10px; flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .news-form input{
+      flex:1;
+      min-width: 200px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.26);
+      background: rgba(255,255,255,.12);
+      color:#fff;
+      outline:none;
+      font-weight:800;
+    }
+    .news-form input::placeholder{ color: rgba(255,255,255,.85); }
+    .news-form button{
+      padding: 12px 14px;
+      border:none;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 1000;
+      background: #ffd166;
+      color:#1a1a1a;
+    }
+
+    /* FINAL CTA */
+    .final-cta{
+      margin-top: 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: var(--shadow2);
+      padding: 18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 14px;
+      flex-wrap:wrap;
+    }
+    .final-cta h3{ margin:0; color: var(--ink); }
+    .final-cta p{ margin: 0; color: var(--muted); font-weight:700; }
+
+    /* RESPONSIVE */
+    @media (max-width: 980px){
+      .tripbar{ grid-template-columns: 1fr 1fr; }
+      .features{ grid-template-columns: 1fr 1fr; }
+      .grid{ grid-template-columns: 1fr; }
+      .experience{ grid-template-columns: 1fr; }
+      .experience .panel{ grid-template-columns: 1fr; }
+      .experience .panel .photo{ min-height: 220px; }
+      .testimonials{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px){
+      .tripbar{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">Discover <span>Sri Lanka</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <nav class="nav-main">
+        <a href="index.html" class="active">Home</a>
+        <a href="destinations.html">Destinations</a>
+        <a href="food.html">Food</a>
+        <a href="culture.html">Culture</a>
+        <a href="practical.html">Visa & Info</a>
+        <a href="contact.html">Contact Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero-pro">
+      <div class="hero-inner">
+        <div class="hero-badges">
+          <span class="pill">🌴 <b>Pearl</b> of the Indian Ocean</span>
+          <span class="pill">🏆 UNESCO • Wildlife • Beaches • Tea Country</span>
+          <span class="pill">🧭 Best for: <b>7–14 day</b> trips</span>
+        </div>
+
+        <h1 class="hero-title">Discover Sri Lanka</h1>
+        <p class="hero-subtitle">
+          Ancient kingdoms, scenic trains, misty mountains, golden beaches, and unforgettable food —
+          curated guides, top places, and practical visa tips in one beautiful hub.
+        </p>
+
+        <div class="hero-cta">
+          <a href="destinations.html" class="btn-pro btn-primary-pro">Explore Destinations →</a>
+          <a href="practical.html" class="btn-pro btn-secondary-pro">Visa & Travel Info</a>
+        </div>
+
+        <!-- Itinerary Generator Form (calls Netlify Function -> OpenAI) -->
+        <form class="tripbar" id="itineraryForm">
+          <div class="field">
+            <label for="location">Starting location</label>
+            <input id="location" name="location" required placeholder="Colombo, Ella, Sigiriya, Galle..." />
+          </div>
+
+          <div class="field">
+            <label for="days">Days</label>
+            <select id="days" name="days" required>
+              <option value="5">5</option>
+              <option value="7" selected>7</option>
+              <option value="10">10</option>
+              <option value="12">12</option>
+              <option value="14">14</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="travelers">Travelers</label>
+            <select id="travelers" name="travelers" required>
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="style">Style</label>
+            <select id="style" name="style">
+              <option value="balanced" selected>Balanced</option>
+              <option value="luxury">Luxury</option>
+              <option value="budget">Budget</option>
+              <option value="adventure">Adventure</option>
+              <option value="family">Family</option>
+            </select>
+          </div>
+
+          <button class="go" type="submit">Generate →</button>
+        </form>
+
+        <!-- Results -->
+        <div class="hero-results">
+          <div id="itineraryStatus" class="status"></div>
+          <div id="itineraryResult"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY -->
+    <section class="wrap">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-label">Why Sri Lanka</p>
+          <h2 class="section-title">One island. A thousand unforgettable moments.</h2>
+          <p class="section-desc">
+            In just a few hours you can go from beaches to tea hills, from safaris to ancient temples.
+            Sri Lanka is compact, diverse, and perfect for both first-timers and repeat travelers.
+          </p>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <div class="icon">🏝️</div>
+            <div>
+              <h3>Beaches & sunsets</h3>
+              <p>Mirissa, Unawatuna, Arugam Bay — swim, surf, and relax.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <div class="icon">🐘</div>
+            <div>
+              <h3>Wildlife safaris</h3>
+              <p>Yala & Udawalawe — elephants, leopards, and birdlife.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <div class="icon">🏛️</div>
+            <div>
+              <h3>UNESCO heritage</h3>
+              <p>Sigiriya, Polonnaruwa, Dambulla, and Galle Fort.</p>
+            </div>
+          </div>
+          <div class="feature">
+            <div class="icon">🚆</div>
+            <div>
+              <h3>Scenic train rides</h3>
+              <p>Kandy → Ella is one of the world’s most beautiful routes.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:22px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+          <a href="destinations.html" class="btn-pro btn-primary-pro">Top Places →</a>
+          <a href="food.html" class="btn-pro btn-secondary-pro">What to Eat</a>
+          <a href="culture.html" class="btn-pro btn-secondary-pro">Culture & Festivals</a>
+          <a href="practical.html" class="btn-pro btn-secondary-pro">Visa & Essentials</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOP DESTINATIONS -->
+    <section class="wrap" style="padding-top:0;">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-label">Top Picks</p>
+          <h2 class="section-title">Must-visit destinations</h2>
+          <p class="section-desc">Handpicked icons for first-time visitors and “wow” moments.</p>
+        </div>
+
+        <div class="grid">
+          <article class="card-pro">
+            <div class="img">
+              <span class="badge">UNESCO • Iconic</span>
+              <img src="assets/images/sigiriya.jpg" alt="Sigiriya Rock Fortress">
+            </div>
+            <div class="body">
+              <h3>Sigiriya</h3>
+              <div class="meta-row"><span>⏱️ 1 day</span><span>📍 Cultural Triangle</span><span>⭐ Sunrise climb</span></div>
+              <p>Ancient rock fortress and frescoes — one of Sri Lanka’s most unforgettable views.</p>
+              <a class="link" href="destinations.html#sigiriya">Explore Sigiriya →</a>
+            </div>
+          </article>
+
+          <article class="card-pro">
+            <div class="img">
+              <span class="badge">Tea • Mountains</span>
+              <img src="assets/images/ella.jpg" alt="Ella scenic train and tea hills">
+            </div>
+            <div class="body">
+              <h3>Ella</h3>
+              <div class="meta-row"><span>⛰️ Hikes</span><span>🚆 Scenic trains</span><span>🌿 Tea country</span></div>
+              <p>Misty hills, tea plantations, Nine Arches Bridge — perfect for nature and photos.</p>
+              <a class="link" href="destinations.html#ella">Explore Ella →</a>
+            </div>
+          </article>
+
+          <article class="card-pro">
+            <div class="img">
+              <span class="badge">Fort • Sunset</span>
+              <img src="assets/images/galle.jpg" alt="Galle Fort by the ocean">
+            </div>
+            <div class="body">
+              <h3>Galle Fort</h3>
+              <div class="meta-row"><span>🌊 Coastal</span><span>🏛️ Dutch fort</span><span>🍽️ Cafés</span></div>
+              <p>Colonial charm, cobblestone streets, boutique stays, and ocean-front sunsets.</p>
+              <a class="link" href="destinations.html#galle">Explore Galle →</a>
+            </div>
+          </article>
+        </div>
+
+        <div style="text-align:center; margin-top:18px;">
+          <a href="destinations.html" class="btn-pro btn-secondary-pro">View all destinations →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCES + ITINERARIES -->
+    <section class="wrap" style="padding-top:0;">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-label">Experiences</p>
+          <h2 class="section-title">Choose your vibe</h2>
+          <p class="section-desc">Beach days, safari mornings, temple sunsets, and tea-country trains.</p>
+        </div>
+
+        <div class="experience">
+          <div class="panel">
+            <div class="photo" aria-hidden="true"></div>
+            <div class="text">
+              <h3 style="margin:0;color:var(--ink);">Signature experiences</h3>
+              <p style="margin:0;color:var(--muted);line-height:1.7;">
+                Build your trip around what you love. Sri Lanka is small — so you can do a lot without rushing.
+              </p>
+              <div class="chips">
+                <span class="chip">🏄 Surf</span>
+                <span class="chip">🐘 Safari</span>
+                <span class="chip">🏛️ Temples</span>
+                <span class="chip">🚆 Trains</span>
+                <span class="chip">🌿 Tea</span>
+                <span class="chip">🍛 Food</span>
+              </div>
+              <a class="link" href="culture.html">Explore culture & festivals →</a>
+            </div>
+          </div>
+
+          <div class="side">
+            <h3 style="margin:0;color:var(--ink);">Popular itineraries</h3>
+            <p style="margin:8px 0 0;color:var(--muted);line-height:1.6;font-size:14px;">
+              Great routes for first-time travelers. Use the itinerary generator above for a custom plan.
+            </p>
+
+            <div class="itins">
+              <a class="itin" href="practical.html">
+                <div>
+                  <b>7 Days — Highlights</b>
+                  <small>Sigiriya • Kandy • Ella • South Coast</small>
+                </div>
+                <span>→</span>
+              </a>
+              <a class="itin" href="practical.html">
+                <div>
+                  <b>10 Days — Culture + Nature</b>
+                  <small>Triangle • Tea • Safari • Galle</small>
+                </div>
+                <span>→</span>
+              </a>
+              <a class="itin" href="practical.html">
+                <div>
+                  <b>14 Days — Grand Tour</b>
+                  <small>North to South • Beaches + Wildlife</small>
+                </div>
+                <span>→</span>
+              </a>
+            </div>
+
+            <div style="margin-top:14px;">
+              <a href="contact.html" class="btn-pro btn-primary-pro" style="width:100%;">Ask for help →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS + NEWSLETTER -->
+    <section class="wrap" style="padding-top:0;">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-label">Traveler love</p>
+          <h2 class="section-title">What people say</h2>
+          <p class="section-desc">A little social proof makes travel planning feel safer.</p>
+        </div>
+
+        <div class="testimonials">
+          <div class="quote" id="quoteBox">
+            <p id="quoteText">“Sri Lanka surprised us every day — beaches, tea hills, and the friendliest people. The Kandy–Ella train was unreal.”</p>
+            <div class="who">
+              <div class="avatar" aria-hidden="true"></div>
+              <div>
+                <b id="quoteName">Ariana M.</b>
+                <small id="quoteMeta">New York • 10-day trip</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="newsletter">
+            <div>
+              <h3>Get Sri Lanka travel tips</h3>
+              <p>Short, practical emails: best months by region, visa updates, must-eat foods, and route ideas.</p>
+            </div>
+
+            <!-- Optional: Netlify form -->
+            <form class="news-form" name="newsletter" method="POST" data-netlify="true">
+              <input type="hidden" name="form-name" value="newsletter">
+              <input type="email" name="email" placeholder="Your email" required />
+              <button type="submit">Subscribe</button>
+            </form>
+
+            <p style="margin:0; font-size:12.5px; opacity:.9;">No spam. Unsubscribe anytime.</p>
+          </div>
+        </div>
+
+        <div class="final-cta">
+          <div>
+            <h3>Ready to explore Sri Lanka?</h3>
+            <p>Start with visa info, best destinations, and travel essentials.</p>
+          </div>
+          <a href="practical.html" class="btn-pro btn-primary-pro">Visa & Practical Info →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-info" style="background:#f6f8fb;">
+      <p>© 2025 Surendra Koththigoda. For informational purposes only. Check official sources for visa and travel requirements.</p>
+      <p>Mobile: <a href="tel:+18608349088">+1 860 834 9088</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <h3>Explore</h3>
+        <a href="destinations.html">Destinations</a>
+        <a href="food.html">Food & Cuisine</a>
+        <a href="culture.html">Culture</a>
+      </div>
+      <div>
+        <h3>Plan Your Trip</h3>
+        <a href="practical.html">Visa Information</a>
+        <a href="practical.html#transport">Transport</a>
+        <a href="practical.html#prices">Prices & Budget</a>
+      </div>
+      <div>
+        <h3>Government Links</h3>
+        <a href="https://www.srilanka.travel" target="_blank" rel="noopener">Sri Lanka Tourism</a>
+        <a href="https://www.eta.gov.lk" target="_blank" rel="noopener">ETA / Visa</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 Surendra Koththigoda. For informational purposes only. Check official sources for visa and travel requirements.<br>
+      Mobile: <a href="tel:+18608349088" style="color:inherit;">+1 860 834 9088</a>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu
+    document.querySelector('.menu-toggle')?.addEventListener('click', function() {
+      document.querySelector('.nav-main').classList.toggle('open');
+    });
+
+    // Header shadow on scroll
+    window.addEventListener('scroll', function() {
+      document.querySelector('.site-header')?.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Testimonials rotator
+    const quotes = [
+      { t: "“Sri Lanka surprised us every day — beaches, tea hills, and the friendliest people. The Kandy–Ella train was unreal.”", n: "Ariana M.", m: "New York • 10-day trip" },
+      { t: "“Sigiriya at sunrise was breathtaking. We loved the food, and Galle Fort sunsets were perfect.”", n: "Daniel R.", m: "Boston • 7-day trip" },
+      { t: "“Safari + tea country in one trip? Incredible. Sri Lanka is compact but feels like many countries in one.”", n: "Priya S.", m: "Toronto • 12-day trip" }
+    ];
+    let qi = 0;
+    setInterval(() => {
+      qi = (qi + 1) % quotes.length;
+      const qt = document.getElementById('quoteText');
+      const qn = document.getElementById('quoteName');
+      const qm = document.getElementById('quoteMeta');
+      if (qt && qn && qm){
+        qt.textContent = quotes[qi].t;
+        qn.textContent = quotes[qi].n;
+        qm.textContent = quotes[qi].m;
+      }
+    }, 5200);
+
+    // ---- Itinerary Generator (calls Netlify Function: /.netlify/functions/itinerary) ----
+    const form = document.getElementById("itineraryForm");
+    const statusEl = document.getElementById("itineraryStatus");
+    const resultEl = document.getElementById("itineraryResult");
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[m]));
+    }
+
+    function renderItinerary(data){
+      const daysHtml = (data.days || []).map(d => {
+        const transports = Array.isArray(d.transport) ? d.transport.join(" • ") : "";
+        const planItems = Array.isArray(d.plan) ? d.plan : [];
+        return `
+          <div class="day">
+            <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+              <b>Day ${escapeHtml(d.day)} — ${escapeHtml(d.base || "")}</b>
+              ${transports ? `<span class="meta">${escapeHtml(transports)}</span>` : ``}
+            </div>
+            <ul>
+              ${planItems.map(x => `<li>${escapeHtml(x)}</li>`).join("")}
+            </ul>
+            ${d.food ? `<div class="meta">🍛 Food: ${escapeHtml(d.food)}</div>` : ``}
+          </div>
+        `;
+      }).join("");
+
+      const tips = Array.isArray(data.tips) ? data.tips : [];
+      const tipsHtml = tips.length ? `
+        <div class="tips">
+          <h4>Tips</h4>
+          <ul>${tips.map(t => `<li>${escapeHtml(t)}</li>`).join("")}</ul>
+        </div>
+      ` : "";
+
+      resultEl.innerHTML = `
+        <div class="result-card">
+          <h3>${escapeHtml(data.title || "Your Sri Lanka itinerary")}</h3>
+          ${data.summary ? `<p>${escapeHtml(data.summary)}</p>` : ``}
+          ${daysHtml}
+          ${tipsHtml}
+        </div>
+      `;
+    }
+
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      resultEl.innerHTML = "";
+      statusEl.textContent = "Generating your itinerary…";
+
+      const payload = Object.fromEntries(new FormData(form).entries());
+
+      try {
+        const res = await fetch("/.netlify/functions/itinerary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(errText || `Request failed: ${res.status}`);
+        }
+
+        const data = await res.json();
+        statusEl.textContent = "Done ✅ Your itinerary is ready.";
+        renderItinerary(data);
+      } catch (err) {
+        statusEl.textContent = "Error ❌ Could not generate itinerary.";
+        resultEl.innerHTML = `
+          <div class="result-card">
+            <h3>Something went wrong</h3>
+            <p>${escapeHtml(err?.message || "Unknown error")}</p>
+            <p style="opacity:.9;">Tip: Make sure your Netlify Function is deployed and OPENAI_API_KEY is set in Netlify Environment Variables.</p>
+          </div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

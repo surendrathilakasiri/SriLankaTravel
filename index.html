@@ -4,12 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sri Lanka Travel | Discover the Pearl of the Indian Ocean</title>
-  <meta name="description" content="Your complete guide to Sri Lanka — stunning destinations, cuisine, culture, visa info, and travel tips. Beaches, wildlife, ancient temples, tea country & more." />
+  <meta name="description" content="Your complete guide to Sri Lanka — destinations, food, culture, visa info, and travel tips. Generate a custom itinerary by selecting cities." />
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Premium homepage styles (you can move to styles.css later) -->
   <style>
     :root{
       --bg:#0b1220;
@@ -26,11 +25,9 @@
       --radius: 18px;
     }
 
-    /* HEADER polish */
     .site-header{ position: sticky; top:0; z-index:50; backdrop-filter: blur(10px); }
     .site-header.scrolled{ box-shadow: 0 10px 30px rgba(0,0,0,.08); }
 
-    /* HERO */
     .hero-pro{
       position: relative;
       min-height: calc(100vh - 70px);
@@ -51,35 +48,25 @@
         linear-gradient(to top, rgba(11,18,32,.95), rgba(11,18,32,0) 60%);
       pointer-events:none;
     }
-
     .hero-inner{
       position: relative;
       width: min(1120px, 92vw);
       padding: 40px 0 70px;
     }
 
-    .hero-badges{
-      display:flex; flex-wrap:wrap; gap:10px;
-      align-items:center;
-      margin-bottom: 14px;
-    }
+    .hero-badges{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom: 14px; }
     .pill{
       display:inline-flex; align-items:center; gap:8px;
-      padding: 8px 12px;
-      border-radius: 999px;
+      padding: 8px 12px; border-radius: 999px;
       border: 1px solid rgba(255,255,255,.22);
       background: rgba(255,255,255,.10);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .02em;
+      font-size: 12px; font-weight: 800; letter-spacing: .02em;
     }
     .pill b{ color: var(--accent); }
 
     .hero-title{
       font-size: clamp(38px, 5vw, 68px);
-      line-height: 1.02;
-      margin: 0 0 12px;
-      letter-spacing: .2px;
+      line-height: 1.02; margin: 0 0 12px;
     }
     .hero-subtitle{
       max-width: 760px;
@@ -89,16 +76,11 @@
       line-height: 1.65;
     }
 
-    .hero-cta{
-      display:flex; flex-wrap:wrap; gap:12px;
-      margin: 18px 0 18px;
-    }
+    .hero-cta{ display:flex; flex-wrap:wrap; gap:12px; margin: 18px 0 18px; }
     .btn-pro{
       display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding: 13px 16px;
-      border-radius: 14px;
-      font-weight: 900;
-      text-decoration: none;
+      padding: 13px 16px; border-radius: 14px;
+      font-weight: 900; text-decoration:none;
       border: 1px solid transparent;
       transition: transform .2s ease, opacity .2s ease;
     }
@@ -114,44 +96,65 @@
       border-color: rgba(255,255,255,.25);
     }
 
-    /* TRIP BAR / ITINERARY FORM */
-    .tripbar{
-      margin-top: 22px;
+    /* Trip planner card */
+    .planner{
+      margin-top: 18px;
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(255,255,255,.22);
       border-radius: 18px;
       padding: 12px;
-      display: grid;
-      grid-template-columns: 1.3fr .7fr .7fr .9fr auto;
-      gap: 10px;
       backdrop-filter: blur(12px);
       box-shadow: 0 18px 60px rgba(0,0,0,.22);
     }
-    .tripbar .field{
+
+    .planner-top{
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap: 12px; flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+    .planner-top h2{
+      margin:0; font-size: 18px;
+      letter-spacing: .2px;
+    }
+    .planner-top p{
+      margin: 6px 0 0;
+      color: rgba(255,255,255,.86);
+      font-size: 13.5px;
+      line-height: 1.55;
+      max-width: 740px;
+    }
+
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .field{
       display:flex; flex-direction:column; gap:6px;
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(255,255,255,.16);
       border-radius: 14px;
       padding: 10px 12px;
     }
-    .tripbar label{
+    .field label{
       font-size: 11px;
       font-weight: 900;
       letter-spacing: .12em;
       text-transform: uppercase;
       color: rgba(255,255,255,.85);
     }
-    .tripbar input, .tripbar select{
+    .field input, .field select{
       background: transparent;
       border:none;
       outline:none;
       color:#fff;
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
     }
-    .tripbar input::placeholder{ color: rgba(255,255,255,.72); }
-    .tripbar option{ color:#111; }
-    .tripbar .go{
+    .field option{ color:#111; }
+
+    .go{
       border:none;
       border-radius: 14px;
       font-weight: 1000;
@@ -162,20 +165,58 @@
       transition: transform .2s ease;
       box-shadow: 0 12px 35px rgba(255,209,102,.28);
       white-space: nowrap;
+      height: 100%;
     }
-    .tripbar .go:hover{ transform: translateY(-2px); }
+    .go:hover{ transform: translateY(-2px); }
 
-    /* Itinerary result container (below hero) */
-    .hero-results{
-      margin-top: 14px;
-      display: grid;
-      gap: 12px;
+    /* City chips */
+    .chips-wrap{
+      margin-top: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      padding: 10px;
     }
-    .status{
-      color: rgba(255,255,255,.85);
-      font-weight: 800;
-      font-size: 13px;
+    .chips{
+      display:flex; flex-wrap:wrap; gap:8px;
     }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      font-weight: 900;
+      font-size: 12.5px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .chip input{
+      accent-color: var(--accent);
+      transform: translateY(1px);
+    }
+
+    .chip-actions{
+      margin-top: 10px;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .chip-actions button{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      font-weight: 900;
+      cursor:pointer;
+    }
+    .chip-actions button:hover{ opacity:.95; }
+
+    .hero-results{ margin-top: 14px; display:grid; gap: 12px; }
+    .status{ color: rgba(255,255,255,.85); font-weight: 800; font-size: 13px; }
+
     .result-card{
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(255,255,255,.22);
@@ -184,17 +225,9 @@
       padding: 14px;
       box-shadow: 0 18px 60px rgba(0,0,0,.18);
     }
-    .result-card h3{
-      margin: 0 0 6px;
-      font-size: 18px;
-      color: #fff;
-    }
-    .result-card p{
-      margin: 0 0 10px;
-      color: rgba(255,255,255,.88);
-      line-height: 1.6;
-      font-size: 14px;
-    }
+    .result-card h3{ margin: 0 0 6px; font-size: 18px; color: #fff; }
+    .result-card p{ margin: 0 0 10px; color: rgba(255,255,255,.88); line-height: 1.6; font-size: 14px; }
+
     .day{
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(255,255,255,.18);
@@ -203,85 +236,34 @@
       margin-top: 10px;
     }
     .day b{ color:#fff; }
-    .day ul{
-      margin: 8px 0 0;
-      padding-left: 18px;
-      color: rgba(255,255,255,.90);
-      line-height: 1.6;
-      font-size: 14px;
-    }
-    .day .meta{
-      margin-top: 6px;
-      font-size: 12.5px;
-      font-weight: 800;
-      color: rgba(255,255,255,.82);
-    }
-    .tips{
-      margin-top: 12px;
-      border-top: 1px dashed rgba(255,255,255,.25);
-      padding-top: 10px;
-    }
+    .day ul{ margin: 8px 0 0; padding-left: 18px; color: rgba(255,255,255,.90); line-height: 1.6; font-size: 14px; }
+    .day .meta{ margin-top: 6px; font-size: 12.5px; font-weight: 800; color: rgba(255,255,255,.82); }
+
+    .tips{ margin-top: 12px; border-top: 1px dashed rgba(255,255,255,.25); padding-top: 10px; }
     .tips h4{ margin: 0 0 8px; color:#fff; }
-    .tips ul{
-      margin:0;
-      padding-left: 18px;
-      color: rgba(255,255,255,.90);
-      line-height:1.6;
-      font-size: 14px;
-    }
+    .tips ul{ margin:0; padding-left: 18px; color: rgba(255,255,255,.90); line-height:1.6; font-size: 14px; }
 
-    /* MAIN sections */
-    .wrap{
-      background: #f6f8fb;
-      padding: 68px 18px;
-    }
-    .container{
-      max-width: 1120px;
-      margin: 0 auto;
-    }
+    /* Main sections */
+    .wrap{ background: #f6f8fb; padding: 68px 18px; }
+    .container{ max-width: 1120px; margin: 0 auto; }
 
-    .section-header{
-      text-align:center;
-      margin-bottom: 26px;
-    }
+    .section-header{ text-align:center; margin-bottom: 26px; }
     .section-label{
-      margin:0 0 10px;
-      color: var(--brand2);
-      font-weight: 900;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      font-size: 12px;
+      margin:0 0 10px; color: var(--brand2);
+      font-weight: 900; letter-spacing: .18em; text-transform: uppercase; font-size: 12px;
     }
-    .section-title{
-      margin:0 0 10px;
-      font-size: clamp(24px, 2.2vw, 36px);
-      color: var(--ink);
-    }
-    .section-desc{
-      margin: 0 auto;
-      max-width: 860px;
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 15px;
-    }
+    .section-title{ margin:0 0 10px; font-size: clamp(24px, 2.2vw, 36px); color: var(--ink); }
+    .section-desc{ margin: 0 auto; max-width: 860px; color: var(--muted); line-height: 1.7; font-size: 15px; }
 
-    /* FEATURE tiles */
     .features{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-top: 18px;
+      display:grid; grid-template-columns: repeat(4, 1fr);
+      gap: 14px; margin-top: 18px;
     }
     .feature{
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow2);
-      padding: 16px;
-      text-align:left;
-      display:flex;
-      gap: 12px;
-      align-items:flex-start;
+      background: #fff; border: 1px solid var(--line);
+      border-radius: var(--radius); box-shadow: var(--shadow2);
+      padding: 16px; text-align:left;
+      display:flex; gap: 12px; align-items:flex-start;
     }
     .feature .icon{
       width: 44px; height: 44px;
@@ -295,229 +277,42 @@
     .feature h3{ margin:0 0 6px; font-size: 15px; color: var(--ink); }
     .feature p{ margin:0; color: var(--muted); font-size: 13.5px; line-height: 1.55; }
 
-    /* DESTINATION cards */
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-top: 18px;
-    }
+    .grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 18px; }
     .card-pro{
-      background:#fff;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      overflow:hidden;
+      background:#fff; border: 1px solid var(--line);
+      border-radius: var(--radius); overflow:hidden;
       box-shadow: var(--shadow2);
       transition: transform .18s ease;
     }
     .card-pro:hover{ transform: translateY(-4px); }
-    .card-pro .img{
-      position: relative;
-      height: 200px;
-      background: #dfe7ef;
-      overflow:hidden;
-    }
-    .card-pro img{
-      width:100%; height:100%;
-      object-fit: cover;
-      transform: scale(1.02);
-    }
+    .card-pro .img{ position: relative; height: 200px; background: #dfe7ef; overflow:hidden; }
+    .card-pro img{ width:100%; height:100%; object-fit: cover; transform: scale(1.02); }
     .badge{
-      position:absolute;
-      top: 12px; left: 12px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.45);
-      color:#fff;
+      position:absolute; top: 12px; left: 12px;
+      padding: 8px 10px; border-radius: 999px;
+      background: rgba(0,0,0,.45); color:#fff;
       border: 1px solid rgba(255,255,255,.22);
-      font-size: 12px;
-      font-weight: 900;
+      font-size: 12px; font-weight: 900;
       backdrop-filter: blur(10px);
     }
-    .card-pro .body{
-      padding: 16px;
-    }
+    .card-pro .body{ padding: 16px; }
     .card-pro h3{ margin:0 0 8px; color: var(--ink); font-size: 18px; }
-    .meta-row{
-      display:flex; gap: 10px; flex-wrap:wrap;
-      margin: 0 0 10px;
-      color: var(--muted);
-      font-size: 12.5px;
-      font-weight: 700;
-    }
+    .meta-row{ display:flex; gap: 10px; flex-wrap:wrap; margin: 0 0 10px; color: var(--muted); font-size: 12.5px; font-weight: 700; }
     .card-pro p{ margin:0 0 12px; color: var(--muted); line-height: 1.65; font-size: 14px; }
     .link{
       display:inline-flex; align-items:center; gap: 8px;
-      color: var(--brand);
-      text-decoration:none;
-      font-weight: 900;
-      font-size: 14px;
+      color: var(--brand); text-decoration:none;
+      font-weight: 900; font-size: 14px;
     }
     .link:hover{ text-decoration: underline; }
 
-    /* EXPERIENCES */
-    .experience{
-      display:grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 18px;
-      margin-top: 18px;
-      align-items: stretch;
-    }
-    .experience .panel{
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow2);
-      background: #fff;
-      overflow:hidden;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    .experience .panel .photo{
-      background:
-        linear-gradient(120deg, rgba(10,61,98,.25), rgba(10,61,98,.10)),
-        url("assets/images/experience.jpg") center/cover no-repeat;
-      min-height: 280px;
-    }
-    .experience .panel .text{
-      padding: 18px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      gap: 10px;
-    }
-    .experience .chips{
-      display:flex; flex-wrap:wrap; gap: 8px;
-    }
-    .chip{
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: #fbfdff;
-      font-weight: 900;
-      color: var(--text);
-      font-size: 12px;
-    }
-    .experience .side{
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow2);
-      background: linear-gradient(180deg, #ffffff, #fbfdff);
-      padding: 18px;
-    }
-    .itins{
-      display:grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .itin{
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      background: #fff;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap: 10px;
-      text-decoration:none;
-      color: inherit;
-    }
-    .itin b{ color: var(--ink); }
-    .itin small{ display:block; color: var(--muted); margin-top: 3px; font-weight:700; }
-
-    /* TESTIMONIALS */
-    .testimonials{
-      margin-top: 18px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-    .quote{
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow2);
-      background: #fff;
-      padding: 18px;
-    }
-    .quote p{ margin: 0 0 12px; color: var(--text); line-height: 1.7; font-size: 15px; }
-    .quote .who{ display:flex; align-items:center; gap: 10px; }
-    .avatar{
-      width: 38px; height: 38px; border-radius: 50%;
-      background: linear-gradient(135deg, rgba(10,61,98,.25), rgba(255,209,102,.25));
-      border: 1px solid rgba(10,61,98,.15);
-    }
-    .who b{ display:block; color: var(--ink); }
-    .who small{ color: var(--muted); font-weight:700; }
-
-    .newsletter{
-      border-radius: var(--radius);
-      border: 1px solid rgba(255,255,255,.18);
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 20px 55px rgba(10,61,98,.25);
-      color:#fff;
-      padding: 18px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      gap: 12px;
-    }
-    .newsletter h3{ margin:0; font-size: 18px; }
-    .newsletter p{ margin:0; opacity:.92; line-height: 1.6; font-size: 14px; }
-    .news-form{
-      display:flex; gap: 10px; flex-wrap:wrap;
-      margin-top: 10px;
-    }
-    .news-form input{
-      flex:1;
-      min-width: 200px;
-      padding: 12px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.26);
-      background: rgba(255,255,255,.12);
-      color:#fff;
-      outline:none;
-      font-weight:800;
-    }
-    .news-form input::placeholder{ color: rgba(255,255,255,.85); }
-    .news-form button{
-      padding: 12px 14px;
-      border:none;
-      border-radius: 12px;
-      cursor:pointer;
-      font-weight: 1000;
-      background: #ffd166;
-      color:#1a1a1a;
-    }
-
-    /* FINAL CTA */
-    .final-cta{
-      margin-top: 22px;
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      background: #fff;
-      box-shadow: var(--shadow2);
-      padding: 18px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap: 14px;
-      flex-wrap:wrap;
-    }
-    .final-cta h3{ margin:0; color: var(--ink); }
-    .final-cta p{ margin: 0; color: var(--muted); font-weight:700; }
-
-    /* RESPONSIVE */
     @media (max-width: 980px){
-      .tripbar{ grid-template-columns: 1fr 1fr; }
+      .controls{ grid-template-columns: 1fr 1fr; }
       .features{ grid-template-columns: 1fr 1fr; }
       .grid{ grid-template-columns: 1fr; }
-      .experience{ grid-template-columns: 1fr; }
-      .experience .panel{ grid-template-columns: 1fr; }
-      .experience .panel .photo{ min-height: 220px; }
-      .testimonials{ grid-template-columns: 1fr; }
     }
     @media (max-width: 560px){
-      .tripbar{ grid-template-columns: 1fr; }
+      .controls{ grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -539,7 +334,6 @@
   </header>
 
   <main>
-    <!-- HERO -->
     <section class="hero-pro">
       <div class="hero-inner">
         <div class="hero-badges">
@@ -559,55 +353,93 @@
           <a href="practical.html" class="btn-pro btn-secondary-pro">Visa & Travel Info</a>
         </div>
 
-        <!-- Itinerary Generator Form (calls Netlify Function -> OpenAI) -->
-        <form class="tripbar" id="itineraryForm">
-          <div class="field">
-            <label for="location">Starting location</label>
-            <input id="location" name="location" required placeholder="Colombo, Ella, Sigiriya, Galle..." />
+        <!-- Trip Planner -->
+        <div class="planner">
+          <div class="planner-top">
+            <div>
+              <h2>Build your itinerary (AI)</h2>
+              <p>Select one or more Sri Lanka cities. Default is <b>Kandy</b>. Choose 2–5 cities for best routes.</p>
+            </div>
           </div>
 
-          <div class="field">
-            <label for="days">Days</label>
-            <select id="days" name="days" required>
-              <option value="5">5</option>
-              <option value="7" selected>7</option>
-              <option value="10">10</option>
-              <option value="12">12</option>
-              <option value="14">14</option>
-            </select>
-          </div>
+          <form id="itineraryForm">
+            <!-- City chips -->
+            <div class="chips-wrap">
+              <div class="chips" id="cityChips">
+                <!-- Default checked: Kandy -->
+                <label class="chip"><input type="checkbox" name="cities" value="Kandy" checked> Kandy</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Colombo"> Colombo</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Sigiriya"> Sigiriya</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Dambulla"> Dambulla</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Anuradhapura"> Anuradhapura</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Polonnaruwa"> Polonnaruwa</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Nuwara Eliya"> Nuwara Eliya</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Ella"> Ella</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Haputale"> Haputale</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Galle"> Galle</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Unawatuna"> Unawatuna</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Mirissa"> Mirissa</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Hikkaduwa"> Hikkaduwa</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Bentota"> Bentota</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Yala"> Yala</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Udawalawe"> Udawalawe</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Trincomalee"> Trincomalee</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Jaffna"> Jaffna</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Arugam Bay"> Arugam Bay</label>
+                <label class="chip"><input type="checkbox" name="cities" value="Negombo"> Negombo</label>
+              </div>
 
-          <div class="field">
-            <label for="travelers">Travelers</label>
-            <select id="travelers" name="travelers" required>
-              <option value="1">1</option>
-              <option value="2" selected>2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-            </select>
-          </div>
+              <div class="chip-actions">
+                <button type="button" id="selectAllCities">Select all</button>
+                <button type="button" id="clearCities">Clear</button>
+              </div>
+            </div>
 
-          <div class="field">
-            <label for="style">Style</label>
-            <select id="style" name="style">
-              <option value="balanced" selected>Balanced</option>
-              <option value="luxury">Luxury</option>
-              <option value="budget">Budget</option>
-              <option value="adventure">Adventure</option>
-              <option value="family">Family</option>
-            </select>
-          </div>
+            <!-- Controls -->
+            <div class="controls" style="margin-top:12px;">
+              <div class="field">
+                <label for="days">Days</label>
+                <select id="days" name="days" required>
+                  <option value="5">5</option>
+                  <option value="7" selected>7</option>
+                  <option value="10">10</option>
+                  <option value="12">12</option>
+                  <option value="14">14</option>
+                </select>
+              </div>
 
-          <button class="go" type="submit">Generate →</button>
-        </form>
+              <div class="field">
+                <label for="travelers">Travelers</label>
+                <select id="travelers" name="travelers" required>
+                  <option value="1">1</option>
+                  <option value="2" selected>2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
 
-        <!-- Results -->
+              <div class="field">
+                <label for="style">Style</label>
+                <select id="style" name="style">
+                  <option value="balanced" selected>Balanced</option>
+                  <option value="luxury">Luxury</option>
+                  <option value="budget">Budget</option>
+                  <option value="adventure">Adventure</option>
+                  <option value="family">Family</option>
+                </select>
+              </div>
+
+              <button class="go" type="submit">Generate →</button>
+            </div>
+          </form>
+        </div>
+
         <div class="hero-results">
           <div id="itineraryStatus" class="status"></div>
           <div id="itineraryResult"></div>
@@ -615,7 +447,6 @@
       </div>
     </section>
 
-    <!-- WHY -->
     <section class="wrap">
       <div class="container">
         <div class="section-header">
@@ -667,7 +498,6 @@
       </div>
     </section>
 
-    <!-- TOP DESTINATIONS -->
     <section class="wrap" style="padding-top:0;">
       <div class="container">
         <div class="section-header">
@@ -723,121 +553,6 @@
       </div>
     </section>
 
-    <!-- EXPERIENCES + ITINERARIES -->
-    <section class="wrap" style="padding-top:0;">
-      <div class="container">
-        <div class="section-header">
-          <p class="section-label">Experiences</p>
-          <h2 class="section-title">Choose your vibe</h2>
-          <p class="section-desc">Beach days, safari mornings, temple sunsets, and tea-country trains.</p>
-        </div>
-
-        <div class="experience">
-          <div class="panel">
-            <div class="photo" aria-hidden="true"></div>
-            <div class="text">
-              <h3 style="margin:0;color:var(--ink);">Signature experiences</h3>
-              <p style="margin:0;color:var(--muted);line-height:1.7;">
-                Build your trip around what you love. Sri Lanka is small — so you can do a lot without rushing.
-              </p>
-              <div class="chips">
-                <span class="chip">🏄 Surf</span>
-                <span class="chip">🐘 Safari</span>
-                <span class="chip">🏛️ Temples</span>
-                <span class="chip">🚆 Trains</span>
-                <span class="chip">🌿 Tea</span>
-                <span class="chip">🍛 Food</span>
-              </div>
-              <a class="link" href="culture.html">Explore culture & festivals →</a>
-            </div>
-          </div>
-
-          <div class="side">
-            <h3 style="margin:0;color:var(--ink);">Popular itineraries</h3>
-            <p style="margin:8px 0 0;color:var(--muted);line-height:1.6;font-size:14px;">
-              Great routes for first-time travelers. Use the itinerary generator above for a custom plan.
-            </p>
-
-            <div class="itins">
-              <a class="itin" href="practical.html">
-                <div>
-                  <b>7 Days — Highlights</b>
-                  <small>Sigiriya • Kandy • Ella • South Coast</small>
-                </div>
-                <span>→</span>
-              </a>
-              <a class="itin" href="practical.html">
-                <div>
-                  <b>10 Days — Culture + Nature</b>
-                  <small>Triangle • Tea • Safari • Galle</small>
-                </div>
-                <span>→</span>
-              </a>
-              <a class="itin" href="practical.html">
-                <div>
-                  <b>14 Days — Grand Tour</b>
-                  <small>North to South • Beaches + Wildlife</small>
-                </div>
-                <span>→</span>
-              </a>
-            </div>
-
-            <div style="margin-top:14px;">
-              <a href="contact.html" class="btn-pro btn-primary-pro" style="width:100%;">Ask for help →</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TESTIMONIALS + NEWSLETTER -->
-    <section class="wrap" style="padding-top:0;">
-      <div class="container">
-        <div class="section-header">
-          <p class="section-label">Traveler love</p>
-          <h2 class="section-title">What people say</h2>
-          <p class="section-desc">A little social proof makes travel planning feel safer.</p>
-        </div>
-
-        <div class="testimonials">
-          <div class="quote" id="quoteBox">
-            <p id="quoteText">“Sri Lanka surprised us every day — beaches, tea hills, and the friendliest people. The Kandy–Ella train was unreal.”</p>
-            <div class="who">
-              <div class="avatar" aria-hidden="true"></div>
-              <div>
-                <b id="quoteName">Ariana M.</b>
-                <small id="quoteMeta">New York • 10-day trip</small>
-              </div>
-            </div>
-          </div>
-
-          <div class="newsletter">
-            <div>
-              <h3>Get Sri Lanka travel tips</h3>
-              <p>Short, practical emails: best months by region, visa updates, must-eat foods, and route ideas.</p>
-            </div>
-
-            <!-- Optional: Netlify form -->
-            <form class="news-form" name="newsletter" method="POST" data-netlify="true">
-              <input type="hidden" name="form-name" value="newsletter">
-              <input type="email" name="email" placeholder="Your email" required />
-              <button type="submit">Subscribe</button>
-            </form>
-
-            <p style="margin:0; font-size:12.5px; opacity:.9;">No spam. Unsubscribe anytime.</p>
-          </div>
-        </div>
-
-        <div class="final-cta">
-          <div>
-            <h3>Ready to explore Sri Lanka?</h3>
-            <p>Start with visa info, best destinations, and travel essentials.</p>
-          </div>
-          <a href="practical.html" class="btn-pro btn-primary-pro">Visa & Practical Info →</a>
-        </div>
-      </div>
-    </section>
-
     <section class="contact-info" style="background:#f6f8fb;">
       <p>© 2025 Surendra Koththigoda. For informational purposes only. Check official sources for visa and travel requirements.</p>
       <p>Mobile: <a href="tel:+18608349088">+1 860 834 9088</a></p>
@@ -873,7 +588,7 @@
   <script>
     // Mobile menu
     document.querySelector('.menu-toggle')?.addEventListener('click', function() {
-      document.querySelector('.nav-main').classList.toggle('open');
+      document.querySelector('.nav-main')?.classList.toggle('open');
     });
 
     // Header shadow on scroll
@@ -881,26 +596,19 @@
       document.querySelector('.site-header')?.classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Testimonials rotator
-    const quotes = [
-      { t: "“Sri Lanka surprised us every day — beaches, tea hills, and the friendliest people. The Kandy–Ella train was unreal.”", n: "Ariana M.", m: "New York • 10-day trip" },
-      { t: "“Sigiriya at sunrise was breathtaking. We loved the food, and Galle Fort sunsets were perfect.”", n: "Daniel R.", m: "Boston • 7-day trip" },
-      { t: "“Safari + tea country in one trip? Incredible. Sri Lanka is compact but feels like many countries in one.”", n: "Priya S.", m: "Toronto • 12-day trip" }
-    ];
-    let qi = 0;
-    setInterval(() => {
-      qi = (qi + 1) % quotes.length;
-      const qt = document.getElementById('quoteText');
-      const qn = document.getElementById('quoteName');
-      const qm = document.getElementById('quoteMeta');
-      if (qt && qn && qm){
-        qt.textContent = quotes[qi].t;
-        qn.textContent = quotes[qi].n;
-        qm.textContent = quotes[qi].m;
-      }
-    }, 5200);
+    // Select all / Clear cities
+    document.getElementById("selectAllCities")?.addEventListener("click", () => {
+      document.querySelectorAll('input[name="cities"]').forEach(cb => cb.checked = true);
+    });
 
-    // ---- Itinerary Generator (calls Netlify Function: /.netlify/functions/itinerary) ----
+    document.getElementById("clearCities")?.addEventListener("click", () => {
+      document.querySelectorAll('input[name="cities"]').forEach(cb => cb.checked = false);
+      // Default back to Kandy
+      const kandy = [...document.querySelectorAll('input[name="cities"]')].find(cb => cb.value === "Kandy");
+      if (kandy) kandy.checked = true;
+    });
+
+    // ---- Itinerary Generator ----
     const form = document.getElementById("itineraryForm");
     const statusEl = document.getElementById("itineraryStatus");
     const resultEl = document.getElementById("itineraryResult");
@@ -952,7 +660,20 @@
       resultEl.innerHTML = "";
       statusEl.textContent = "Generating your itinerary…";
 
-      const payload = Object.fromEntries(new FormData(form).entries());
+      const fd = new FormData(form);
+
+      const cities = fd.getAll("cities").map(x => String(x).trim()).filter(Boolean);
+      if (!cities.length) {
+        statusEl.textContent = "❌ Please select at least one city (default is Kandy).";
+        return;
+      }
+
+      const payload = {
+        cities,
+        days: fd.get("days"),
+        travelers: fd.get("travelers"),
+        style: fd.get("style")
+      };
 
       try {
         const res = await fetch("/.netlify/functions/itinerary", {
@@ -962,8 +683,9 @@
         });
 
         if (!res.ok) {
-          const errText = await res.text();
-          throw new Error(errText || `Request failed: ${res.status}`);
+          const errData = await res.json().catch(() => null);
+          const message = errData?.error || `Request failed: ${res.status}`;
+          throw new Error(message);
         }
 
         const data = await res.json();
@@ -975,7 +697,6 @@
           <div class="result-card">
             <h3>Something went wrong</h3>
             <p>${escapeHtml(err?.message || "Unknown error")}</p>
-            <p style="opacity:.9;">Tip: Make sure your Netlify Function is deployed and OPENAI_API_KEY is set in Netlify Environment Variables.</p>
           </div>
         `;
       }
