@@ -1,6 +1,23 @@
 import OpenAI from "openai";
+import { getStore } from "@netlify/blobs";
+import crypto from "crypto";
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+function stableStringify(obj) {
+  // Ensures consistent order so hash stays the same
+  return JSON.stringify(obj, Object.keys(obj).sort());
+}
+
+function makeKey(payload) {
+  const normalized = {
+    location: String(payload.location || "").trim().toLowerCase(),
+    travelers: Number(payload.travelers),
+    days: Number(payload.days),
+    style: String(payload.style || "balanced").trim().toLowerCase(),
+  };
+
+  const hash = crypto.createHash("sha256").update(stableStringify(normalized)).digest("hex");
+  return { key: `itinerary:${hash}`, normalized };
+}
 
 export const handler = async (event) => {
   try {
@@ -8,75 +25,87 @@ export const handler = async (event) => {
       return { statusCode: 405, body: "Method Not Allowed" };
     }
 
-    const { location, travelers, days, style } = JSON.parse(event.body || "{}");
-
-    // Basic validation
-    if (!location || !travelers || !days) {
-      return { statusCode: 400, body: "Missing required fields: location, travelers, days" };
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return { statusCode: 500, body: "OPENAI_API_KEY missing in Netlify environment variables." };
     }
 
-    const travelersNum = Number(travelers);
-    const daysNum = Number(days);
+    const payload = JSON.parse(event.body || "{}");
+    const { key, normalized } = makeKey(payload);
 
-    if (!Number.isFinite(travelersNum) || travelersNum < 1 || travelersNum > 20) {
-      return { statusCode: 400, body: "travelers must be between 1 and 20" };
-    }
-    if (!Number.isFinite(daysNum) || daysNum < 1 || daysNum > 30) {
-      return { statusCode: 400, body: "days must be between 1 and 30" };
+    // 1) Open the blob store
+    // Store name can be anything; keep it consistent
+    const store = getStore("itineraries");
+
+    // 2) Try cache first
+    const cached = await store.get(key, { type: "json" });
+    if (cached) {
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "application/json", "X-Cache": "HIT" },
+        body: JSON.stringify(cached),
+      };
     }
 
-    const schemaHint = `
-Return ONLY valid JSON with this shape:
+    // 3) Generate using OpenAI (cache MISS)
+    const client = new OpenAI({ apiKey });
+
+    const schemaRules = `
+Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
 {
   "title": string,
   "summary": string,
   "days": [
-    {
-      "day": number,
-      "base": string,
-      "transport": string[],
-      "plan": string[],
-      "food": string
-    }
+    { "day": number, "base": string, "transport": string[], "plan": string[], "food": string }
   ],
   "tips": string[]
 }
-Rules:
-- Make it realistic for Sri Lanka driving times.
-- Mix culture + nature + food.
-- Include 2-4 activities per day.
-- Avoid unsafe advice.
 `;
 
     const prompt = `
-Create a Sri Lanka travel itinerary.
+Create a Sri Lanka itinerary.
+Starting location/focus area: ${normalized.location}
+Travelers: ${normalized.travelers}
+Trip length (days): ${normalized.days}
+Style: ${normalized.style}
 
-Inputs:
-- Starting location or focus area: ${location}
-- Travelers: ${travelersNum}
-- Trip length (days): ${daysNum}
-- Style: ${style || "balanced"}
-
-${schemaHint}
+${schemaRules}
 `;
 
-    // OpenAI Responses API (recommended for new projects) :contentReference[oaicite:1]{index=1}
     const resp = await client.responses.create({
       model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
       input: prompt,
       temperature: 0.6,
     });
 
-    const text = resp.output_text?.trim() || "";
-    // If model returns JSON as text, parse it:
-    const json = JSON.parse(text);
+    const text = (resp.output_text || "").trim();
+    const data = JSON.parse(text);
+
+    // 4) Save result to Blobs (persistent)
+    // Add simple metadata so you can clean old entries later if needed
+    await store.setJSON(key, data, {
+      metadata: {
+        createdAt: new Date().toISOString(),
+        normalized,
+      },
+    });
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(json),
+      headers: { "Content-Type": "application/json", "X-Cache": "MISS" },
+      body: JSON.stringify(data),
     };
+
   } catch (err) {
+    const status = err?.status || err?.response?.status;
+
+    // Cleaner message for quota
+    if (status === 429) {
+      return {
+        statusCode: 429,
+        body: "OpenAI quota/rate limit. Check billing/limits or reduce requests.",
+      };
+    }
     return { statusCode: 500, body: `Server error: ${err.message}` };
   }
 };
