@@ -364,42 +364,54 @@
 
           <form id="itineraryForm">
             <!-- City chips -->
-            <div class="chips-wrap">
-              <div class="chips" id="cityChips">
-                <!-- Default checked: Kandy -->
-                <label class="chip"><input type="checkbox" name="cities" value="Kandy" checked> Kandy</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Colombo"> Colombo</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Sigiriya"> Sigiriya</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Dambulla"> Dambulla</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Anuradhapura"> Anuradhapura</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Polonnaruwa"> Polonnaruwa</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Nuwara Eliya"> Nuwara Eliya</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Ella"> Ella</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Haputale"> Haputale</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Galle"> Galle</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Unawatuna"> Unawatuna</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Mirissa"> Mirissa</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Hikkaduwa"> Hikkaduwa</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Bentota"> Bentota</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Yala"> Yala</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Udawalawe"> Udawalawe</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Trincomalee"> Trincomalee</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Jaffna"> Jaffna</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Arugam Bay"> Arugam Bay</label>
-                <label class="chip"><input type="checkbox" name="cities" value="Negombo"> Negombo</label>
-              </div>
-
-              <div class="chip-actions">
-                <button type="button" id="selectAllCities">Select all</button>
-                <button type="button" id="clearCities">Clear</button>
+            <div class="field" style="grid-column: 1 / -1;">
+              <label for="cities">Cities (select one or more)</label>
+            
+              <select id="cities" name="cities" multiple required
+                      style="height: 160px; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.10); color:#fff; font-weight:800;">
+                <option value="Kandy" selected>Kandy</option>
+                <option value="Colombo">Colombo</option>
+                <option value="Sigiriya">Sigiriya</option>
+                <option value="Dambulla">Dambulla</option>
+                <option value="Anuradhapura">Anuradhapura</option>
+                <option value="Polonnaruwa">Polonnaruwa</option>
+                <option value="Nuwara Eliya">Nuwara Eliya</option>
+                <option value="Ella">Ella</option>
+                <option value="Haputale">Haputale</option>
+                <option value="Galle">Galle</option>
+                <option value="Unawatuna">Unawatuna</option>
+                <option value="Mirissa">Mirissa</option>
+                <option value="Hikkaduwa">Hikkaduwa</option>
+                <option value="Bentota">Bentota</option>
+                <option value="Yala">Yala</option>
+                <option value="Udawalawe">Udawalawe</option>
+                <option value="Trincomalee">Trincomalee</option>
+                <option value="Jaffna">Jaffna</option>
+                <option value="Arugam Bay">Arugam Bay</option>
+                <option value="Negombo">Negombo</option>
+              </select>
+            
+              <p style="margin:8px 0 0; color: rgba(255,255,255,.85); font-size: 12.5px;">
+                Hold <b>Cmd</b> (Mac) or <b>Ctrl</b> (Windows) to select multiple.
+              </p>
+            
+              <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" id="citiesSelectAll" class="btn-pro btn-secondary-pro" style="padding:10px 12px;">Select all</button>
+                <button type="button" id="citiesClear" class="btn-pro btn-secondary-pro" style="padding:10px 12px;">Clear</button>
               </div>
             </div>
+            
 
+            
             <!-- Controls -->
             <div class="controls" style="margin-top:12px;">
               <div class="field">
                 <label for="days">Days</label>
                 <select id="days" name="days" required>
+                  <option value="5">1</option>
+                  <option value="5">2</option>
+                  <option value="5">3/option>
+                    <option value="5">4/option>
                   <option value="5">5</option>
                   <option value="7" selected>7</option>
                   <option value="10">10</option>
