@@ -371,16 +371,14 @@
 
             <!-- This looks like an input, but is readonly -->
             <input
-              type="text"
-              id="citySearch"
-              class="pill-input"
-              placeholder="Colombo, Ella, Sigiriya, Galle..."
-              aria-haspopup="listbox"
-              aria-expanded="false"
-            />
+            type="text"
+            id="citySearch"
+            class="pill-input"
+            placeholder="Colombo, Ella, Sigiriya, Galle..."
+            autocomplete="off"/>          
 
             <!-- Dropdown (hidden until click) -->
-            <div id="cityDropdown" class="pill-dropdown" role="listbox" aria-label="Select cities">
+            <div id="cityDropdown" class="pill-dropdown" role="listbox">
               <div class="pill-dropdown-search">
                 <input id="cityFilter" type="text" placeholder="Search..." />
               </div>

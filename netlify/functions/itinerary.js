@@ -95,11 +95,11 @@ export const handler = async (event) => {
     }
 
     for (const c of cities) {
-      if (!VALID_CITIES.has(c)) {
+      if (c.length < 2 || c.length > 40) {
         return {
           statusCode: 400,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ error: `Invalid city: ${c}. Please select cities from the list.` })
+          body: JSON.stringify({ error: `Invalid city name: "${c}"` })
         };
       }
     }
@@ -109,29 +109,29 @@ export const handler = async (event) => {
 
     // Force JSON-only output
     const schemaRules = `
-Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
-{
-  "title": string,
-  "summary": string,
-  "days": [
-    {
-      "day": number,
-      "base": string,
-      "transport": string[],
-      "plan": string[],
-      "food": string
-    }
-  ],
-  "tips": string[]
-}
-Rules:
-- Use ONLY places within Sri Lanka.
-- Optimize the route between selected cities (reorder if needed for realism).
-- Allocate days logically across cities (more days for major hubs).
-- 2–4 activities per day, realistic travel times.
-- Mention train/bus/tuk-tuk/private car options where relevant.
-- Include one local food suggestion per day.
-`;
+  Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
+  {
+    "title": string,
+    "summary": string,
+    "days": [
+      {
+        "day": number,
+        "base": string,
+        "transport": string[],
+        "plan": string[],
+        "food": string
+      }
+    ],
+    "tips": string[]
+  }
+  Rules:
+  - Use ONLY places within Sri Lanka.
+  - Optimize the route between selected cities (reorder if needed for realism).
+  - Allocate days logically across cities (more days for major hubs).
+  - 2–4 activities per day, realistic travel times.
+  - Mention train/bus/tuk-tuk/private car options where relevant.
+  - Include one local food suggestion per day.
+  `;
 
     const prompt = `
 Create a Sri Lanka itinerary based on the user's selected cities.
