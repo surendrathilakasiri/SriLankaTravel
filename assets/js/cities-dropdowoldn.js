@@ -13,7 +13,7 @@ const cityList = document.getElementById("cityList");
 const hiddenWrap = document.getElementById("citiesHiddenInputs");
 
 // ✅ default
-const selected = new Set(["Kandy"]);
+const selected = new Set();
 
 function cleanCity(s){
   return String(s || "").trim().replace(/\s+/g, " ");

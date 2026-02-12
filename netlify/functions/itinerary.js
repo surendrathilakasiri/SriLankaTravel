@@ -1,33 +1,6 @@
 // netlify/functions/itinerary.js
 import OpenAI from "openai";
 
-/**
- * Whitelist (because UI sends only these, but still validate server-side).
- * Add more cities anytime. Keep spelling consistent with index.html values.
- */
-const VALID_CITIES = new Set([
-  "Kandy",
-  "Colombo",
-  "Sigiriya",
-  "Dambulla",
-  "Anuradhapura",
-  "Polonnaruwa",
-  "Nuwara Eliya",
-  "Ella",
-  "Haputale",
-  "Galle",
-  "Unawatuna",
-  "Mirissa",
-  "Hikkaduwa",
-  "Bentota",
-  "Yala",
-  "Udawalawe",
-  "Trincomalee",
-  "Jaffna",
-  "Arugam Bay",
-  "Negombo"
-]);
-
 function clampInt(value, min, max) {
   const n = Number(value);
   if (!Number.isFinite(n)) return null;
@@ -81,9 +54,9 @@ export const handler = async (event) => {
       };
     }
 
-    // Sanitize + validate cities
+    // Sanitize + validate cities (allow custom, but keep it sane)
     const cities = citiesRaw
-      .map((c) => String(c || "").trim())
+      .map((c) => String(c || "").trim().replace(/\s+/g, " "))
       .filter(Boolean);
 
     if (cities.length === 0) {
@@ -104,34 +77,32 @@ export const handler = async (event) => {
       }
     }
 
-    // Create OpenAI client at runtime (safer)
     const client = new OpenAI({ apiKey });
 
-    // Force JSON-only output
     const schemaRules = `
-  Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
-  {
-    "title": string,
-    "summary": string,
-    "days": [
-      {
-        "day": number,
-        "base": string,
-        "transport": string[],
-        "plan": string[],
-        "food": string
-      }
-    ],
-    "tips": string[]
-  }
-  Rules:
-  - Use ONLY places within Sri Lanka.
-  - Optimize the route between selected cities (reorder if needed for realism).
-  - Allocate days logically across cities (more days for major hubs).
-  - 2–4 activities per day, realistic travel times.
-  - Mention train/bus/tuk-tuk/private car options where relevant.
-  - Include one local food suggestion per day.
-  `;
+Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
+{
+  "title": string,
+  "summary": string,
+  "days": [
+    {
+      "day": number,
+      "base": string,
+      "transport": string[],
+      "plan": string[],
+      "food": string
+    }
+  ],
+  "tips": string[]
+}
+Rules:
+- Use ONLY places within Sri Lanka.
+- Optimize the route between selected cities (reorder if needed for realism).
+- Allocate days logically across cities (more days for major hubs).
+- 2–4 activities per day, realistic travel times.
+- Mention train/bus/tuk-tuk/private car options where relevant.
+- Include one local food suggestion per day.
+`;
 
     const prompt = `
 Create a Sri Lanka itinerary based on the user's selected cities.

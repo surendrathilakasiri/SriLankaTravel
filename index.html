@@ -35,8 +35,8 @@
       place-items: center;
       overflow: hidden;
       background:
-        linear-gradient(120deg, rgba(8,16,32,.92), rgba(10,61,98,.55)),
-        url("assets/images/home-hero.jpg") center/cover no-repeat;
+        linear-gradient(120deg, rgba(6, 10, 19, 0.92), rgba(12, 167, 245, 0.55)),
+        url("images/home.jpg") center/cover no-repeat;
       color: #fff;
     }
     .hero-pro::after{
@@ -344,8 +344,8 @@
 
         <h1 class="hero-title">Discover Sri Lanka</h1>
         <p class="hero-subtitle">
-          Ancient kingdoms, scenic trains, misty mountains, golden beaches, and unforgettable food —
-          curated guides, top places, and practical visa tips in one beautiful hub.
+          Ancient kingdoms, epic wildlife safaris, scenic train journeys, misty mountains, golden beaches, and unforgettable food — discover Sri Lanka through curated guides, top destinations, and essential 
+          travel tips in one beautiful hub.
         </p>
 
         <div class="hero-cta">
@@ -364,32 +364,40 @@
 
           <form id="itineraryForm" style="display: flex; gap: 12px; align-items: center;">
             <!-- City dropdown -->
-             
-          <!-- STARTING LOCATION (multi-select dropdown) -->
-          <div class="pill-field pill-field-wide" id="startingLocationWrap">
-            <div class="pill-label">STARTING LOCATION</div>
+         
+            
+            <div class="pill-field pill-field-wide" id="startingLocationWrap">
 
-            <!-- This looks like an input, but is readonly -->
-            <input
-            type="text"
-            id="citySearch"
-            class="pill-input"
-            placeholder="Colombo, Ella, Sigiriya, Galle..."
-            autocomplete="off"/>          
-
-            <!-- Dropdown (hidden until click) -->
-            <div id="cityDropdown" class="pill-dropdown" role="listbox">
-              <div class="pill-dropdown-search">
-                <input id="cityFilter" type="text" placeholder="Search..." />
+              <div class="pill-label">STARTING LOCATION</div>
+            
+              <input
+                type="text"
+                id="citySearch"
+                class="pill-input"
+                placeholder="Select one or more cities…"
+                autocomplete="off"
+              />
+            
+              <!-- Dropdown -->
+              <div id="cityDropdown" class="pill-dropdown">
+                <div class="pill-dropdown-search">
+                  <input id="cityFilter" type="text" placeholder="Search cities…" />
+                </div>
+                <div id="cityList" class="pill-dropdown-list"></div>
               </div>
-              <div id="cityList" class="pill-dropdown-list"></div>
+            
+              <!-- Hidden inputs -->
+              <div id="citiesHiddenInputs"></div>
+            
+              <!-- ✅ ADD ERROR MESSAGE HERE -->
+              <div id="cityError"
+                   style="color:#ffb3b3; font-weight:700; margin-top:8px; display:none;">
+                Please select at least one city.
+              </div>
+            
             </div>
-
-            <!-- Hidden inputs for FormData.getAll('cities') -->
-            <div id="citiesHiddenInputs"></div>
-          </div>
-
-
+            
+            
 
         
             <!-- Controls -->
@@ -511,7 +519,7 @@
           <article class="card-pro">
             <div class="img">
               <span class="badge">UNESCO • Iconic</span>
-              <img src="assets/images/sigiriya.jpg" alt="Sigiriya Rock Fortress">
+              <img src="images/sigiriya.jpg" alt="Sigiriya Rock Fortress">
             </div>
             <div class="body">
               <h3>Sigiriya</h3>
@@ -524,7 +532,7 @@
           <article class="card-pro">
             <div class="img">
               <span class="badge">Tea • Mountains</span>
-              <img src="assets/images/ella.jpg" alt="Ella scenic train and tea hills">
+              <img src="images/ella.jpg" alt="Ella scenic train and tea hills">
             </div>
             <div class="body">
               <h3>Ella</h3>
@@ -537,7 +545,7 @@
           <article class="card-pro">
             <div class="img">
               <span class="badge">Fort • Sunset</span>
-              <img src="assets/images/galle.jpg" alt="Galle Fort by the ocean">
+              <img src="images/galle.jpg" alt="Galle Fort by the ocean">
             </div>
             <div class="body">
               <h3>Galle Fort</h3>
@@ -553,33 +561,11 @@
         </div>
       </div>
     </section>
-
-    <section class="contact-info" style="background:#f6f8fb;">
-      <p>© 2025 Surendra Koththigoda. For informational purposes only. Check official sources for visa and travel requirements.</p>
-      <p>Mobile: <a href="tel:+18608349088">+1 860 834 9088</a></p>
-    </section>
   </main>
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <div>
-        <h3>Explore</h3>
-        <a href="destinations.html">Destinations</a>
-        <a href="food.html">Food & Cuisine</a>
-        <a href="culture.html">Culture</a>
-      </div>
-      <div>
-        <h3>Plan Your Trip</h3>
-        <a href="practical.html">Visa Information</a>
-        <a href="practical.html#transport">Transport</a>
-        <a href="practical.html#prices">Prices & Budget</a>
-      </div>
-      <div>
-        <h3>Government Links</h3>
-        <a href="https://www.srilanka.travel" target="_blank" rel="noopener">Sri Lanka Tourism</a>
-        <a href="https://www.eta.gov.lk" target="_blank" rel="noopener">ETA / Visa</a>
-      </div>
-    </div>
+         
     <div class="footer-bottom">
       © 2025 Surendra Koththigoda. For informational purposes only. Check official sources for visa and travel requirements.<br>
       Mobile: <a href="tel:+18608349088" style="color:inherit;">+1 860 834 9088</a>
@@ -703,7 +689,7 @@
       }
     });
   </script>
-  <script src="assets/js/cities-dropdown.js"></script>
+  <script src="assets/js/city.js"></script>
 
 </body>
 </html>
