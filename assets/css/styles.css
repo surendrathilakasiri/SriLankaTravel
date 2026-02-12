@@ -673,3 +673,173 @@ tr:hover { background: rgba(13, 92, 74, 0.08); }
 @media (max-width: 768px) {
   .quick-links { grid-template-columns: 1fr 1fr; }
 }
+
+/* ============================================
+   Itinerary Planner - Glass Pill Row (ADD ONLY)
+   ============================================ */
+
+   .planner-row{
+    display:flex;
+    gap:14px;
+    align-items:stretch;
+    padding:18px;
+    border-radius: var(--radius-xl);
+    border:1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 16px 60px rgba(0,0,0,.22);
+  }
+  
+  .pill-field{
+    position:relative;
+    flex: 1 1 220px;
+    min-width: 180px;
+    border-radius: var(--radius-xl);
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.07);
+    padding:14px 16px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  
+  .pill-field-wide{
+    flex: 2.2 1 420px;
+    min-width: 280px;
+  }
+  
+  .pill-label{
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.65);
+    margin-bottom: 8px;
+  }
+  
+  .pill-input,
+  .pill-select{
+    width:100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: rgba(255,255,255,.92);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  
+  .pill-input{
+    cursor:pointer;
+  }
+  
+  .pill-input::placeholder{
+    color: rgba(255,255,255,.35);
+    font-weight: 700;
+  }
+  
+  /* Select chevron */
+  .pill-select{
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 28px;
+    cursor: pointer;
+  }
+  
+  .pill-field::after{
+    content:"";
+    position:absolute;
+    right:18px;
+    top: 58%;
+    width:10px;
+    height:10px;
+    border-right: 2px solid rgba(255,255,255,.55);
+    border-bottom: 2px solid rgba(255,255,255,.55);
+    transform: translateY(-50%) rotate(45deg);
+    pointer-events:none;
+    opacity:.9;
+  }
+  
+  /* Remove chevron for Starting Location (it’s an input) */
+  #startingLocationWrap::after{ display:none; }
+  
+  /* Generate button */
+  .pill-generate{
+    border:none;
+    cursor:pointer;
+    border-radius: var(--radius-xl);
+    padding: 0 22px;
+    min-width: 160px;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color:#1a1a1a;
+    background: linear-gradient(180deg, var(--color-sand), #b8932e);
+    box-shadow: 0 14px 45px rgba(233,196,106,.22);
+  }
+  .pill-generate:hover{ opacity:.96; transform: translateY(-1px); }
+  .pill-generate:active{ transform: translateY(0px); }
+  
+  /* Dropdown */
+  .pill-dropdown{
+    display:none;
+    position:absolute;
+    left:0; right:0;
+    top: calc(100% + 10px);
+    z-index: 9999;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(10, 20, 30, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 18px 70px rgba(0,0,0,.35);
+    overflow: hidden;
+  }
+  
+  .pill-dropdown-search{
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,.10);
+  }
+  .pill-dropdown-search input{
+    width:100%;
+    padding:10px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.08);
+    color:#fff;
+    outline:none;
+    font-weight: 700;
+  }
+  
+  .pill-dropdown-list{
+    max-height: 290px;
+    overflow:auto;
+  }
+  
+  .pill-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    cursor:pointer;
+  }
+  .pill-row:last-child{ border-bottom:none; }
+  .pill-row:hover{ background: rgba(255,255,255,.06); }
+  
+  .pill-city{
+    color:#fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  
+  .pill-check{
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-sand);
+  }
+  
+  /* Responsive */
+  @media (max-width: 980px){
+    .planner-row{ flex-wrap: wrap; }
+    .pill-generate{ width:100%; min-height:56px; }
+  }
+  

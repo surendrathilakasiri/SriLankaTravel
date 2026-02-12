@@ -358,51 +358,43 @@
           <div class="planner-top">
             <div>
               <h2>Build your itinerary (AI)</h2>
-              <p>Select one or more Sri Lanka cities. Default is <b>Kandy</b>. Choose 2–5 cities for best routes.</p>
+              <p>Select one or more Sri Lanka cities.</p>
             </div>
           </div>
 
-          <form id="itineraryForm">
-            <!-- City chips -->
-            <div class="field" style="grid-column: 1 / -1;">
-              <label for="cities">Cities (select one or more)</label>
-            
-              <select id="cities" name="cities" multiple required
-                      style="height: 160px; padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.10); color:#fff; font-weight:800;">
-                <option value="Kandy" selected>Kandy</option>
-                <option value="Colombo">Colombo</option>
-                <option value="Sigiriya">Sigiriya</option>
-                <option value="Dambulla">Dambulla</option>
-                <option value="Anuradhapura">Anuradhapura</option>
-                <option value="Polonnaruwa">Polonnaruwa</option>
-                <option value="Nuwara Eliya">Nuwara Eliya</option>
-                <option value="Ella">Ella</option>
-                <option value="Haputale">Haputale</option>
-                <option value="Galle">Galle</option>
-                <option value="Unawatuna">Unawatuna</option>
-                <option value="Mirissa">Mirissa</option>
-                <option value="Hikkaduwa">Hikkaduwa</option>
-                <option value="Bentota">Bentota</option>
-                <option value="Yala">Yala</option>
-                <option value="Udawalawe">Udawalawe</option>
-                <option value="Trincomalee">Trincomalee</option>
-                <option value="Jaffna">Jaffna</option>
-                <option value="Arugam Bay">Arugam Bay</option>
-                <option value="Negombo">Negombo</option>
-              </select>
-            
-              <p style="margin:8px 0 0; color: rgba(255,255,255,.85); font-size: 12.5px;">
-                Hold <b>Cmd</b> (Mac) or <b>Ctrl</b> (Windows) to select multiple.
-              </p>
-            
-              <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-                <button type="button" id="citiesSelectAll" class="btn-pro btn-secondary-pro" style="padding:10px 12px;">Select all</button>
-                <button type="button" id="citiesClear" class="btn-pro btn-secondary-pro" style="padding:10px 12px;">Clear</button>
-              </div>
-            </div>
-            
+          <form id="itineraryForm" style="display: flex; gap: 12px; align-items: center;">
+            <!-- City dropdown -->
+             
+          <!-- STARTING LOCATION (multi-select dropdown) -->
+          <div class="pill-field pill-field-wide" id="startingLocationWrap">
+            <div class="pill-label">STARTING LOCATION</div>
 
-            
+            <!-- This looks like an input, but is readonly -->
+            <input
+              type="text"
+              id="citySearch"
+              class="pill-input"
+              placeholder="Colombo, Ella, Sigiriya, Galle..."
+              readonly
+              aria-haspopup="listbox"
+              aria-expanded="false"
+            />
+
+            <!-- Dropdown (hidden until click) -->
+            <div id="cityDropdown" class="pill-dropdown" role="listbox" aria-label="Select cities">
+              <div class="pill-dropdown-search">
+                <input id="cityFilter" type="text" placeholder="Search..." />
+              </div>
+              <div id="cityList" class="pill-dropdown-list"></div>
+            </div>
+
+            <!-- Hidden inputs for FormData.getAll('cities') -->
+            <div id="citiesHiddenInputs"></div>
+          </div>
+
+
+
+        
             <!-- Controls -->
             <div class="controls" style="margin-top:12px;">
               <div class="field">
@@ -448,7 +440,7 @@
               </div>
 
               <button class="go" type="submit">Generate →</button>
-            </div>
+            </div><br>
           </form>
         </div>
 
@@ -714,5 +706,7 @@
       }
     });
   </script>
+  <script src="assets/js/cities-dropdown.js"></script>
+
 </body>
 </html>
