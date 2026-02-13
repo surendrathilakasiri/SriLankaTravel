@@ -113,7 +113,6 @@ ${schemaRules}
     const resp = await client.responses.create({
       model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
       input: prompt,
-      max_output_tokens: 240,
       temperature: 0.6
     });
 
