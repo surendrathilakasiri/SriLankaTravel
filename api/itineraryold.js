@@ -1,3 +1,4 @@
+// api/itinerary.js  (Vercel Function, OpenAI SDK v5)
 import OpenAI from "openai";
 
 function clampInt(value, min, max) {
@@ -6,6 +7,23 @@ function clampInt(value, min, max) {
   const i = Math.trunc(n);
   if (i < min || i > max) return null;
   return i;
+}
+
+function normalizeCities(citiesRaw) {
+  const cleaned = (Array.isArray(citiesRaw) ? citiesRaw : [])
+    .map((c) => String(c || "").trim().replace(/\s+/g, " "))
+    .filter(Boolean);
+
+  // dedupe (case-insensitive) while preserving order
+  const seen = new Set();
+  const unique = [];
+  for (const c of cleaned) {
+    const key = c.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(c);
+  }
+  return unique;
 }
 
 export async function POST(request) {
@@ -20,39 +38,25 @@ export async function POST(request) {
 
     const body = await request.json().catch(() => ({}));
 
-    const citiesRaw = body.cities;
+    const cities = normalizeCities(body.cities);
     const travelers = clampInt(body.travelers, 1, 20);
     const days = clampInt(body.days, 1, 30);
-    const style = String(body.style || "balanced").trim();
+    const style = String(body.style || "balanced").trim().slice(0, 30);
 
-    if (!Array.isArray(citiesRaw) || citiesRaw.length === 0) {
+    if (!cities.length) {
       return new Response(JSON.stringify({ error: "Please select at least one city." }), {
         status: 400,
         headers: { "Content-Type": "application/json" }
       });
     }
-
     if (!travelers) {
       return new Response(JSON.stringify({ error: "Invalid travelers value (must be 1–20)." }), {
         status: 400,
         headers: { "Content-Type": "application/json" }
       });
     }
-
     if (!days) {
       return new Response(JSON.stringify({ error: "Invalid days value (must be 1–30)." }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" }
-      });
-    }
-
-    // Sanitize cities (allow custom, keep it sane)
-    const cities = citiesRaw
-      .map((c) => String(c || "").trim().replace(/\s+/g, " "))
-      .filter(Boolean);
-
-    if (!cities.length) {
-      return new Response(JSON.stringify({ error: "Please select at least one city." }), {
         status: 400,
         headers: { "Content-Type": "application/json" }
       });
@@ -70,7 +74,7 @@ export async function POST(request) {
     const client = new OpenAI({ apiKey });
 
     const schemaRules = `
-Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
+Return ONLY valid JSON (no markdown, no extra text) exactly in this shape:
 {
   "title": string,
   "summary": string,
@@ -80,27 +84,35 @@ Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
       "base": string,
       "transport": string[],
       "plan": string[],
-      "food": string
+      "food": string,
+      "cost_usd": {
+        "transport": number,
+        "food": number,
+        "hotel": number,
+        "activities": number,
+        "total": number
+      }
     }
   ],
   "tips": string[]
 }
+
 Rules:
-- Use ONLY places within Sri Lanka.
-- Optimize the route between selected cities (reorder if needed for realism).
-- Allocate days logically across cities.
-- 2–4 activities per day, realistic travel times.
-- Mention train/bus/tuk-tuk/private car options.
-- Include one local food suggestion per day.
-- provide apprximate cost per day in USD including transport, food,hotel and activities with breakdown.
-- keep response concise but informative, max 300 words.
-- if location is not in Sri Lanka suggest a similar one that is in Sri Lanka instead.
+- Use ONLY locations within Sri Lanka.
+- Optimize route order between cities if needed.
+- Keep it VERY short:
+  - plan: max 2 items per day
+  - transport: max 2 items per day
+  - tips: max 3 items
+  - summary: 1–2 sentences
+- Costs are APPROX estimates in USD; keep numbers realistic and rounded.
+- Keep the whole response compact (aim ~100–150 words worth of text inside JSON).
 `;
 
     const prompt = `
-Create a Sri Lanka itinerary based on the user's selected cities.
+Create a balanced Sri Lanka itinerary.
 
-Selected cities (user preference order):
+Selected cities (preference order):
 ${cities.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 
 Trip length (days): ${days}
@@ -110,10 +122,24 @@ Style: ${style}
 ${schemaRules}
 `;
 
+    // ✅ Responses API (v5): use text.format, NOT response_format
     const resp = await client.responses.create({
       model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-      input: prompt,
-      temperature: 0.6
+      temperature: 0.6,
+      max_output_tokens: 240,
+
+      text: {
+        format: { type: "json_object" }
+      },
+
+      input: [
+        {
+          role: "system",
+          content:
+            "Return ONLY valid JSON. No markdown. No commentary. No trailing commas."
+        },
+        { role: "user", content: prompt }
+      ]
     });
 
     const text = (resp.output_text || "").trim();
@@ -128,6 +154,13 @@ ${schemaRules}
       });
     }
 
+    if (!data || typeof data !== "object" || !Array.isArray(data.days)) {
+      return new Response(JSON.stringify({ error: "Unexpected response format. Please try again." }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json" }
@@ -136,7 +169,7 @@ ${schemaRules}
     const status = err?.status || err?.response?.status;
 
     if (status === 429) {
-      return new Response(JSON.stringify({ error: "Maximun retry reached. Please try again later." }), {
+      return new Response(JSON.stringify({ error: "OpenAI quota/rate limit reached. Check billing/limits and try again." }), {
         status: 429,
         headers: { "Content-Type": "application/json" }
       });
