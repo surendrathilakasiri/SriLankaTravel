@@ -94,7 +94,7 @@ Rules:
 - Mention train/bus/tuk-tuk/private car options.
 - Include one local food suggestion per day.
 - provide apprximate cost per day in USD including transport, food,hotel and activities with breakdown.
-- keep response concise but informative, max 300 words.
+- keep response concise but max 100 words.
 - if location is not in Sri Lanka suggest a similar one that is in Sri Lanka instead.
 `;
 
