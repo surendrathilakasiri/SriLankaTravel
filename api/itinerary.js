@@ -1,4 +1,4 @@
-// api/itinerary.js
+// api/itinerary.js  (Vercel Function, OpenAI SDK v5)
 import OpenAI from "openai";
 
 function clampInt(value, min, max) {
@@ -10,12 +10,11 @@ function clampInt(value, min, max) {
 }
 
 function normalizeCities(citiesRaw) {
-  // trim + collapse spaces + remove empties
   const cleaned = (Array.isArray(citiesRaw) ? citiesRaw : [])
     .map((c) => String(c || "").trim().replace(/\s+/g, " "))
     .filter(Boolean);
 
-  // dedupe while preserving order (case-insensitive)
+  // dedupe (case-insensitive) while preserving order
   const seen = new Set();
   const unique = [];
   for (const c of cleaned) {
@@ -63,7 +62,6 @@ export async function POST(request) {
       });
     }
 
-    // sanity check city lengths
     for (const c of cities) {
       if (c.length < 2 || c.length > 40) {
         return new Response(JSON.stringify({ error: `Invalid city name: "${c}"` }), {
@@ -75,8 +73,6 @@ export async function POST(request) {
 
     const client = new OpenAI({ apiKey });
 
-    // IMPORTANT: If you require "breakdown costs" you cannot *really* guarantee <=100 words.
-    // So we enforce a small JSON + strict token cap to keep output short.
     const schemaRules = `
 Return ONLY valid JSON (no markdown, no extra text) exactly in this shape:
 {
@@ -102,8 +98,8 @@ Return ONLY valid JSON (no markdown, no extra text) exactly in this shape:
 }
 
 Rules:
-- Use ONLY locations within Sri Lanka. If user provided a non-Sri-Lanka place, replace it with a similar Sri Lanka destination.
-- Optimize route order between cities if needed (still respect preferences).
+- Use ONLY locations within Sri Lanka.
+- Optimize route order between cities if needed.
 - Keep it VERY short:
   - plan: max 2 items per day
   - transport: max 2 items per day
@@ -126,21 +122,25 @@ Style: ${style}
 ${schemaRules}
 `;
 
-  const resp = await client.responses.create({
-    model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-    temperature: 0.4,
-    max_output_tokens: 240,
-    text: { format: { type: "json_object" }},
-    input: [
-      {
-        role: "system",
-        content:
-          "You must output ONLY valid JSON. No markdown. No commentary. No trailing commas."
-      },
-      { role: "user", content: prompt }
-    ]
-  });
+    // ✅ Responses API (v5): use text.format, NOT response_format
+    const resp = await client.responses.create({
+      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+      temperature: 0.4,
+      max_output_tokens: 240,
 
+      text: {
+        format: { type: "json_object" }
+      },
+
+      input: [
+        {
+          role: "system",
+          content:
+            "Return ONLY valid JSON. No markdown. No commentary. No trailing commas."
+        },
+        { role: "user", content: prompt }
+      ]
+    });
 
     const text = (resp.output_text || "").trim();
 
@@ -154,7 +154,6 @@ ${schemaRules}
       });
     }
 
-    // Minimal validation (avoid breaking your UI)
     if (!data || typeof data !== "object" || !Array.isArray(data.days)) {
       return new Response(JSON.stringify({ error: "Unexpected response format. Please try again." }), {
         status: 500,
