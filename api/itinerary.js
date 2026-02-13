@@ -84,15 +84,15 @@ Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
     }
   ],
   "tips": string[]
+  "cost": string[]
 }
 Rules:
-- Use ONLY locations within Sri Lanka.
-- Optimize route order between cities if needed.
-- Keep it VERY short
-- plan: max 2 items per day
-- transport max 2 items per day
-- tips max 3 items
-- summary 1–2 sentences
+- Use ONLY places within Sri Lanka.
+- Optimize the route between selected cities (reorder if needed for realism).
+- Allocate days logically across cities (more days for major hubs).
+- 2–3 activities per day, realistic travel times.
+- Mention train/bus/tuk-tuk/private car options where relevant.
+- Include one local food suggestion per day.
 - Costs are APPROX estimates in USD; keep numbers realistic and rounded.
 - Keep the whole response compact .
 `;
