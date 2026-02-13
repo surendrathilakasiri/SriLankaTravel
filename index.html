@@ -664,7 +664,7 @@
 
       try {
         //const res = await fetch("/.netlify/functions/itinerary", { // For Netlify Functions
-        fetch("/api/itinerary", {  // Version for direct server endpoint
+        const res = await fetch("/api/itinerary", {  // Version for direct server endpoint
 
           method: "POST",
           headers: { "Content-Type": "application/json" },
