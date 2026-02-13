@@ -130,7 +130,7 @@ ${schemaRules}
     model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
     temperature: 0.4,
     max_output_tokens: 240,
-    response_format: { type: "json_object" },
+    text: { format: { type: "json_object" }},
     input: [
       {
         role: "system",
