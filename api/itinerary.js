@@ -126,13 +126,21 @@ Style: ${style}
 ${schemaRules}
 `;
 
-    const resp = await client.responses.create({
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-      input: prompt,
-      temperature: 0.4,
-      // This is what *actually* keeps output short:
-      max_output_tokens: 240
-    });
+  const resp = await client.responses.create({
+    model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+    temperature: 0.4,
+    max_output_tokens: 240,
+    response_format: { type: "json_object" },
+    input: [
+      {
+        role: "system",
+        content:
+          "You must output ONLY valid JSON. No markdown. No commentary. No trailing commas."
+      },
+      { role: "user", content: prompt }
+    ]
+  });
+
 
     const text = (resp.output_text || "").trim();
 
