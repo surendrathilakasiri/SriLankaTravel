@@ -86,15 +86,15 @@ Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
   "tips": string[]
 }
 Rules:
-- Use ONLY places within Sri Lanka.
-- Optimize the route between selected cities (reorder if needed for realism).
-- Allocate days logically across cities.
-- 2–4 activities per day, realistic travel times.
-- Mention train/bus/tuk-tuk/private car options.
-- Include one local food suggestion per day.
-- provide apprximate cost per day in USD including transport, food,hotel and activities with breakdown.
-- keep response concise but informative, max 300 words.
-- if location is not in Sri Lanka suggest a similar one that is in Sri Lanka instead.
+- Use ONLY locations within Sri Lanka.
+- Optimize route order between cities if needed.
+- Keep it VERY short
+- plan: max 2 items per day
+- transport max 2 items per day
+- tips max 3 items
+- summary 1–2 sentences
+- Costs are APPROX estimates in USD; keep numbers realistic and rounded.
+- Keep the whole response compact .
 `;
 
     const prompt = `
@@ -113,6 +113,7 @@ ${schemaRules}
     const resp = await client.responses.create({
       model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
       input: prompt,
+      max_output_tokens: 240,
       temperature: 0.6
     });
 
