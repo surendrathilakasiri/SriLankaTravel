@@ -330,7 +330,8 @@
           <h2 class="section-title">Start planning</h2>
         </div>
 
-        <form method="POST"
+        <form id="contactForm"
+              method="POST"
               action="https://formsubmit.co/surendrakoththigoda@gmail.com"
               class="contact-form">
 
@@ -364,6 +365,7 @@
 
           <div class="form-actions">
             <button type="submit" class="btn-submit">Send Message</button>
+            <p id="formStatus" class="form-note" aria-live="polite"></p>
             <p class="form-note">
               By submitting, you agree we can reply to your email. We never share your info.
             </p>
@@ -401,6 +403,39 @@
   <script>
     document.querySelector('.menu-toggle')?.addEventListener('click', function() {
       document.querySelector('.nav-main').classList.toggle('open');
+    });
+
+    const contactForm = document.getElementById("contactForm");
+    const formStatus = document.getElementById("formStatus");
+
+    contactForm?.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const submitBtn = contactForm.querySelector(".btn-submit");
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+      formStatus.textContent = "";
+
+      try {
+        const formData = new FormData(contactForm);
+        const response = await fetch("https://formsubmit.co/ajax/surendrakoththigoda@gmail.com", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) throw new Error("submit-failed");
+
+        formStatus.style.color = "#0b6e4f";
+        formStatus.textContent = "Form submitted successfully.";
+        contactForm.reset();
+      } catch (err) {
+        formStatus.style.color = "#b00020";
+        formStatus.textContent = "Could not submit right now. Please try again.";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
     });
   </script>
 </body>
