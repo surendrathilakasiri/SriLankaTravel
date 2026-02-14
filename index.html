@@ -34,24 +34,43 @@
       display: grid;
       place-items: center;
       overflow: hidden;
-      background:
-        linear-gradient(120deg, rgba(6, 10, 19, 0.92), rgba(12, 167, 245, 0.55)),
-        url("images/home.jpg") center/cover no-repeat;
       color: #fff;
     }
-    .hero-pro::after{
+    .hero-pro::before{
       content:"";
-      position:absolute; inset:-1px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,.18), transparent 40%),
-        radial-gradient(circle at 80% 30%, rgba(255,209,102,.16), transparent 42%),
-        linear-gradient(to top, rgba(11,18,32,.95), rgba(11,18,32,0) 60%);
+      position:absolute;
+      inset:0;
+      background: url("images/elephant.jpg") center/cover no-repeat;
+      animation: heroBgSwap 25s infinite;
+      z-index: 0;
       pointer-events:none;
+    }
+    .hero-pro::after{
+      content: none;
     }
     .hero-inner{
       position: relative;
+      z-index: 1;
       width: min(1120px, 92vw);
       padding: 40px 0 70px;
+    }
+
+    @keyframes heroBgSwap {
+      0%, 19.99% {
+        background-image: url("images/elephant.jpg");
+      }
+      20%, 39.99% {
+        background-image: url("images/beach1.jpg");
+      }
+      40%, 59.99% {
+        background-image: url("images/train.jpg");
+      }
+      60%, 79.99% {
+        background-image: url("images/history.jpg");
+      }
+      80%, 100% {
+        background-image: url("images/home.jpg");
+      }
     }
 
     .hero-badges{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom: 14px; }
@@ -122,6 +141,22 @@
       font-size: 13.5px;
       line-height: 1.55;
       max-width: 740px;
+    }
+
+    #itineraryForm{
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    #itineraryForm > .pill-field{
+      flex: 1 1 320px;
+      min-width: 0;
+    }
+    #itineraryForm > .controls{
+      flex: 1 1 420px;
+      margin-top: 0;
     }
 
     .controls{
@@ -310,9 +345,14 @@
       .controls{ grid-template-columns: 1fr 1fr; }
       .features{ grid-template-columns: 1fr 1fr; }
       .grid{ grid-template-columns: 1fr; }
+      #itineraryForm > .pill-field,
+      #itineraryForm > .controls{
+        flex-basis: 100%;
+      }
     }
     @media (max-width: 560px){
       .controls{ grid-template-columns: 1fr; }
+      .pill-field-wide{ min-width: 0; }
     }
   </style>
 </head>
@@ -362,7 +402,7 @@
             </div>
           </div>
 
-          <form id="itineraryForm" style="display: flex; gap: 12px; align-items: center;">
+          <form id="itineraryForm">
             <!-- City dropdown -->
          
             
@@ -401,7 +441,7 @@
 
         
             <!-- Controls -->
-            <div class="controls" style="margin-top:12px;">
+            <div class="controls">
               <div class="field">
                 <label for="days">Days</label>
                 <select id="days" name="days" required>
