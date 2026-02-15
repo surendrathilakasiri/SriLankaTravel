@@ -332,11 +332,9 @@
 
         <form id="contactForm"
               method="POST"
-              action="https://formsubmit.co/surendrakoththigoda@gmail.com"
+              action="/api/contact"
               class="contact-form">
 
-          <input type="hidden" name="_subject" value="New message from Sri Lanka Travel contact form">
-          <input type="hidden" name="_captcha" value="false">
           <p style="display:none">
             <label>Don’t fill this out: <input name="_honey"></label>
           </p>
@@ -454,13 +452,34 @@
 
       try {
         const formData = new FormData(contactForm);
-        formData.append("source", source || "contact-page");
-        const response = await fetch("https://formsubmit.co/ajax/surendrakoththigoda@gmail.com", {
-          method: "POST",
-          body: formData
-        });
+        const payload = Object.fromEntries(formData.entries());
+        payload.source = source || "contact-page";
 
-        if (!response.ok) throw new Error("submit-failed");
+        const endpoints = ["/api/contact", "/.netlify/functions/contact"];
+        let response = null;
+        let responseData = {};
+        let lastError = null;
+
+        for (const endpoint of endpoints) {
+          try {
+            response = await fetch(endpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            responseData = await response.json().catch(() => ({}));
+            if (response.ok) break;
+            if (response.status !== 404) {
+              throw new Error(responseData.error || "submit-failed");
+            }
+          } catch (innerErr) {
+            lastError = innerErr;
+          }
+        }
+
+        if (!response || !response.ok) {
+          throw lastError || new Error(responseData.error || "submit-failed");
+        }
 
         localStorage.setItem("contact_last_submit_ts", String(now));
         formStatus.style.color = "#0b6e4f";
@@ -472,7 +491,7 @@
         contactForm.reset();
       } catch (err) {
         formStatus.style.color = "#b00020";
-        formStatus.textContent = "Could not submit right now. Please try again.";
+        formStatus.textContent = err?.message || "Could not submit right now. Please try again.";
         window.trackEvent?.("contact_submit_error", {
           topic: topicField.value || "unspecified",
           source: source || "contact-page"
