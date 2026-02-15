@@ -366,9 +366,15 @@
       }
     }
     @media (max-width: 560px){
+      .hero-pro{
+        padding-left: 0;
+        padding-right: 0;
+      }
       .hero-inner{
-        width: min(1120px, 94vw);
-        padding: 28px 0 46px;
+        width: 100%;
+        max-width: 100%;
+        padding: 28px 16px 46px;
+        box-sizing: border-box;
       }
       .hero-badges{ justify-content: center; }
       .hero-title,
@@ -376,13 +382,31 @@
         text-align: center;
       }
       .hero-subtitle{
+        width: 100%;
+        max-width: 100%;
         margin-left: auto;
         margin-right: auto;
       }
       .hero-cta{ justify-content: center; }
       .planner{
+        width: 100%;
+        max-width: 100%;
         margin-left: auto;
         margin-right: auto;
+        box-sizing: border-box;
+      }
+      #itineraryForm{
+        width: 100%;
+      }
+      #itineraryForm > .pill-field,
+      #itineraryForm > .controls{
+        width: 100%;
+      }
+      .pill-field,
+      .field,
+      .go{
+        width: 100%;
+        min-width: 0;
       }
       .controls{ grid-template-columns: 1fr; }
       .pill-field-wide{ min-width: 0; }
@@ -390,7 +414,7 @@
   </style>
 </head>
 
-<body>
+<body class="has-mobile-cta">
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="logo">Travel <span>Sri Lanka</span></a>
@@ -643,6 +667,8 @@
    
   </footer>
 
+  <a href="contact.html" class="mobile-sticky-cta">Plan My Trip</a>
+  <script src="assets/js/site-enhancements.js" defer></script>
   <script>
     // Mobile menu
     document.querySelector('.menu-toggle')?.addEventListener('click', function() {
