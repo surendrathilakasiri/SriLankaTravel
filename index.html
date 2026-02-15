@@ -101,13 +101,23 @@
     .hero-title{
       font-size: clamp(38px, 5vw, 68px);
       line-height: 1.02; margin: 0 0 12px;
+      text-shadow:
+        -1px -1px 0 black,
+        1px -1px 0 black,
+        -1px  1px 0 black,
+        .5px  .5px 0 black;
     }
     .hero-subtitle{
       max-width: 760px;
       margin: 0 0 22px;
-      font-size: clamp(15px, 1.5vw, 18px);
+      font-size: clamp(15px, 1.5vw, 18px);      
       color: rgba(255,255,255,.92);
       line-height: 1.65;
+      text-shadow:
+        -1px -1px 0 black,
+        1px -1px 0 black,
+        -1px  1px 0 black,
+        .5px  .5px 0 black;
     }
 
     .hero-cta{ display:flex; flex-wrap:wrap; gap:12px; margin: 18px 0 18px; }
@@ -283,7 +293,14 @@
     .chip-actions button:hover{ opacity:.95; }
 
     .hero-results{ margin-top: 14px; display:grid; gap: 12px; }
-    .status{ color: #000; font-weight: 800; font-size: 13px; }
+    .status{ 
+      color: #000; font-weight: 800; font-size: 13px;
+      text-shadow:
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px  1px 0 #fff,
+        1px  1px 0 #fff;
+    }
 
     .result-card{
       background: rgba(255,255,255,.10);
@@ -294,7 +311,12 @@
       box-shadow: 0 18px 60px rgba(0,0,0,.18);
     }
     .result-card h3{ margin: 0 0 6px; font-size: 18px; color: #000; }
-    .result-card p{ margin: 0 0 10px; color: #000; line-height: 1.6; font-size: 14px; }
+    .result-card p{ margin: 0 0 10px; color: #000; line-height: 1.6; font-size: 14px;  
+      text-shadow:
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px  1px 0 #fff,
+        1px  1px 0 #fff; }
     .result-actions{
       margin-top: 12px;
       display:flex;
@@ -499,7 +521,7 @@
           <a href="practical.html" class="btn-pro btn-secondary-pro">Visa & Travel Info</a>
         </div>
         <div class="trust-row">
-          <span class="trust-pill">✅ AI + Local expertise</span>
+          <span class="trust-pill">✅ AI Powered</span>
           <span class="trust-pill">🕒 Reply within 24h</span>
           <span class="trust-pill">🔒 No spam. No account needed.</span>
         </div>
@@ -508,14 +530,11 @@
         <div class="planner">
           <div class="planner-top">
             <div>
-              <h2>Build your itinerary (AI)</h2>
-              <p>Select one or more Sri Lanka cities.</p>
-            </div>
+              <h2>Build your own itinerary (AI)</h2>
+              </div>
           </div>
 
           <form id="itineraryForm">
-            <!-- City dropdown -->
-         
             
             <div class="pill-field pill-field-wide" id="startingLocationWrap">
 
@@ -540,17 +559,13 @@
               <!-- Hidden inputs -->
               <div id="citiesHiddenInputs"></div>
             
-              <!-- ✅ ADD ERROR MESSAGE HERE -->
               <div id="cityError"
                    style="color:#ffb3b3; font-weight:700; margin-top:8px; display:none;">
                 Please select at least one city.
               </div>
             
-            </div>
-            
-            
-
-        
+            </div>          
+          
             <!-- Controls -->
             <div class="controls">
               <div class="field">
@@ -792,9 +807,9 @@
           ${daysHtml}
           ${tipsHtml}
           <div class="result-actions">
-            <button type="button" class="action-btn action-save" data-action="save-itinerary">Save Itinerary</button>
+            <button type="button" class="action-btn action-contact" data-action="save-itinerary">Save Itinerary</button>
             <button type="button" class="action-btn action-contact" data-action="send-expert">Send to Expert</button>
-            <a href="my-trips.html" class="action-btn action-save" data-action="view-saved">View Saved Trips</a>
+            <a href="my-trips.html" class="action-btn action-contact" data-action="view-saved">View Saved Trips</a>
           </div>
         </div>
       `;
