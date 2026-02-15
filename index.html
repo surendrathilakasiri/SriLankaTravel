@@ -43,6 +43,7 @@
       display: grid;
       place-items: center;
       overflow: hidden;
+      background: #0b1220;
       color: #fff;
     }
     .hero-pro::before{
@@ -55,7 +56,12 @@
       pointer-events:none;
     }
     .hero-pro::after{
-      content: none;
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,.18));
+      z-index: 0;
+      pointer-events:none;
     }
     .hero-inner{
       position: relative;
@@ -360,6 +366,24 @@
       }
     }
     @media (max-width: 560px){
+      .hero-inner{
+        width: min(1120px, 94vw);
+        padding: 28px 0 46px;
+      }
+      .hero-badges{ justify-content: center; }
+      .hero-title,
+      .hero-subtitle{
+        text-align: center;
+      }
+      .hero-subtitle{
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .hero-cta{ justify-content: center; }
+      .planner{
+        margin-left: auto;
+        margin-right: auto;
+      }
       .controls{ grid-template-columns: 1fr; }
       .pill-field-wide{ min-width: 0; }
     }
