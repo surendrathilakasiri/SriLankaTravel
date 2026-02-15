@@ -409,6 +409,21 @@
 
     const contactForm = document.getElementById("contactForm");
     const formStatus = document.getElementById("formStatus");
+    const params = new URLSearchParams(window.location.search);
+
+    const prefillName = params.get("name");
+    const prefillEmail = params.get("email");
+    const prefillTopic = params.get("topic");
+    const prefillMessage = params.get("message");
+    const source = params.get("source");
+
+    if (prefillName) document.getElementById("name").value = prefillName;
+    if (prefillEmail) document.getElementById("email").value = prefillEmail;
+    if (prefillTopic) document.getElementById("topic").value = prefillTopic;
+    if (prefillMessage) document.getElementById("message").value = prefillMessage;
+    if (!prefillTopic && source === "home-itinerary") {
+      document.getElementById("topic").value = "Itinerary review request";
+    }
 
     contactForm?.addEventListener("submit", async function (e) {
       e.preventDefault();

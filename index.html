@@ -129,6 +129,24 @@
       color:#fff;
       border-color: rgba(255,255,255,.25);
     }
+    .trust-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin: 8px 0 14px;
+    }
+    .trust-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      color:#fff;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.08);
+    }
 
     /* Trip planner card */
     .planner{
@@ -277,6 +295,33 @@
     }
     .result-card h3{ margin: 0 0 6px; font-size: 18px; color: #000; }
     .result-card p{ margin: 0 0 10px; color: #000; line-height: 1.6; font-size: 14px; }
+    .result-actions{
+      margin-top: 12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .action-btn{
+      border:none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .action-save{
+      background: rgba(10,61,98,.12);
+      color:#0a3d62;
+      border:1px solid rgba(10,61,98,.25);
+    }
+    .action-contact{
+      background: linear-gradient(135deg, #0a3d62, #1e5f8c);
+      color:#fff;
+    }
 
     .day{
       background: rgba(255,255,255,.10);
@@ -388,6 +433,7 @@
         margin-right: auto;
       }
       .hero-cta{ justify-content: center; }
+      .trust-row{ justify-content: center; }
       .planner{
         width: 100%;
         max-width: 100%;
@@ -448,6 +494,11 @@
         <div class="hero-cta">
           <a href="destinations.html" class="btn-pro btn-primary-pro">Explore Destinations →</a>
           <a href="practical.html" class="btn-pro btn-secondary-pro">Visa & Travel Info</a>
+        </div>
+        <div class="trust-row">
+          <span class="trust-pill">✅ AI + Local expertise</span>
+          <span class="trust-pill">🕒 Reply within 24h</span>
+          <span class="trust-pill">🔒 No spam. No account needed.</span>
         </div>
 
         <!-- Trip Planner -->
@@ -696,6 +747,7 @@
     const form = document.getElementById("itineraryForm");
     const statusEl = document.getElementById("itineraryStatus");
     const resultEl = document.getElementById("itineraryResult");
+    let latestItineraryData = null;
 
     function escapeHtml(s){
       return String(s).replace(/[&<>"']/g, m => ({
@@ -704,6 +756,7 @@
     }
 
     function renderItinerary(data){
+      latestItineraryData = data;
       const daysHtml = (data.days || []).map(d => {
         const transports = Array.isArray(d.transport) ? d.transport.join(" • ") : "";
         const planItems = Array.isArray(d.plan) ? d.plan : [];
@@ -735,8 +788,57 @@
           ${data.summary ? `<p>${escapeHtml(data.summary)}</p>` : ``}
           ${daysHtml}
           ${tipsHtml}
+          <div class="result-actions">
+            <button type="button" class="action-btn action-save" data-action="save-itinerary">Save Itinerary</button>
+            <button type="button" class="action-btn action-contact" data-action="send-expert">Send to Expert</button>
+          </div>
         </div>
       `;
+    }
+
+    function getTripSnapshot() {
+      const fd = new FormData(form);
+      return {
+        cities: fd.getAll("cities").map(x => String(x).trim()).filter(Boolean),
+        days: String(fd.get("days") || ""),
+        travelers: String(fd.get("travelers") || ""),
+        style: String(fd.get("style") || "")
+      };
+    }
+
+    function saveCurrentItinerary() {
+      if (!latestItineraryData) return;
+      const snapshot = getTripSnapshot();
+      const saved = JSON.parse(localStorage.getItem("saved_itineraries") || "[]");
+      saved.unshift({
+        createdAt: new Date().toISOString(),
+        trip: snapshot,
+        itinerary: latestItineraryData
+      });
+      localStorage.setItem("saved_itineraries", JSON.stringify(saved.slice(0, 10)));
+      statusEl.textContent = "Saved ✅ Itinerary added to this browser.";
+    }
+
+    function sendToExpert() {
+      if (!latestItineraryData) return;
+      const snapshot = getTripSnapshot();
+      const message = [
+        "Hi, I generated an itinerary from the homepage and need expert help.",
+        "",
+        `Cities: ${snapshot.cities.join(", ") || "N/A"}`,
+        `Days: ${snapshot.days || "N/A"}`,
+        `Travelers: ${snapshot.travelers || "N/A"}`,
+        `Style: ${snapshot.style || "N/A"}`,
+        "",
+        `Draft title: ${latestItineraryData.title || "Sri Lanka itinerary"}`,
+        `Draft summary: ${latestItineraryData.summary || ""}`
+      ].join("\n");
+      const params = new URLSearchParams({
+        topic: "Itinerary review request",
+        message,
+        source: "home-itinerary"
+      });
+      window.location.href = `contact.html?${params.toString()}`;
     }
 
     form?.addEventListener("submit", async (e) => {
@@ -786,6 +888,12 @@
           </div>
         `;
       }
+    });
+
+    resultEl?.addEventListener("click", (e) => {
+      const action = e.target?.dataset?.action;
+      if (action === "save-itinerary") saveCurrentItinerary();
+      if (action === "send-expert") sendToExpert();
     });
   </script>
   <script src="assets/js/city.js"></script>
