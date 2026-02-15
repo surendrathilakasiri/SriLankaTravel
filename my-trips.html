@@ -48,18 +48,29 @@
       flex-wrap: wrap;
       margin-top: 10px;
     }
-    .trip-btn {
-      border: 1px solid rgba(10, 61, 98, 0.28);
-      background: rgba(10, 61, 98, 0.08);
-      color: #0a3d62;
-      border-radius: 10px;
-      padding: 8px 10px;
-      font-size: 0.85rem;
-      font-weight: 800;
+    .action-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 900;
       text-decoration: none;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
     }
-    .trip-btn.danger {
+    .action-save {
+      background: rgba(10, 61, 98, 0.12);
+      color: #0a3d62;
+      border: 1px solid rgba(10, 61, 98, 0.25);
+    }
+    .action-contact {
+      background: linear-gradient(135deg, #0a3d62, #1e5f8c);
+      color: #fff;
+    }
+    .action-danger {
       background: rgba(176, 0, 32, 0.08);
       border-color: rgba(176, 0, 32, 0.32);
       color: #b00020;
@@ -86,6 +97,7 @@
       <nav class="nav-main">
         <a href="index.html">Home</a>
         <a href="destinations.html">Destinations</a>
+        <a href="booking.html">Book</a>
         <a href="food.html">Food</a>
         <a href="culture.html">Culture</a>
         <a href="practical.html">Visa & Info</a>
@@ -184,8 +196,8 @@
             </div>
             ${summary ? `<p class="trip-meta">${escapeHtml(summary)}</p>` : ``}
             <div class="trip-actions">
-              <a class="trip-btn" href="contact.html?${params.toString()}">Send to Expert</a>
-              <button class="trip-btn danger" data-remove="${i}">Remove</button>
+              <a class="action-btn action-contact" href="contact.html?${params.toString()}">Send to Expert</a>
+              <button class="action-btn action-save action-danger" data-remove="${i}">Remove</button>
             </div>
           </article>
         `;

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Hotels, Activities & Flights | Sri Lanka Travel</title>
+  <meta name="description" content="Compare live hotel, activity, and flight options for Sri Lanka travel.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .booking-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem;
+    }
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+    }
+    .book-card {
+      background: #fff;
+      border: 1px solid #dce7f1;
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(10, 61, 98, 0.09);
+      padding: 16px;
+    }
+    .book-card h2 {
+      margin: 0 0 8px;
+      color: #0b1b2a;
+      font-size: 1.2rem;
+    }
+    .book-card p {
+      margin: 0 0 14px;
+      color: #536272;
+      font-size: 0.95rem;
+    }
+    .book-form {
+      display: grid;
+      gap: 10px;
+    }
+    .book-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .book-form label {
+      display: block;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-weight: 800;
+      color: #12283f;
+      margin-bottom: 6px;
+    }
+    .book-form input,
+    .book-form select {
+      width: 100%;
+      border: 1px solid #cfdeec;
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 0.95rem;
+      background: #f9fcff;
+      color: #12283f;
+      outline: none;
+    }
+    .book-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+    .book-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      font-weight: 900;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .book-btn.primary {
+      background: linear-gradient(135deg, #0a3d62, #1e5f8c);
+      color: #fff;
+    }
+    .book-btn.secondary {
+      background: rgba(10, 61, 98, 0.1);
+      border: 1px solid rgba(10, 61, 98, 0.25);
+      color: #0a3d62;
+    }
+    .provider-list {
+      display: grid;
+      gap: 10px;
+    }
+    .provider {
+      border: 1px solid #dce7f1;
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+    .provider h3 {
+      margin: 0 0 6px;
+      color: #0b1b2a;
+      font-size: 0.98rem;
+    }
+    .provider p {
+      margin: 0;
+      color: #536272;
+      font-size: 0.9rem;
+    }
+    .tiny-note {
+      margin-top: 10px;
+      color: #6a7684;
+      font-size: 0.84rem;
+    }
+    @media (max-width: 900px) {
+      .booking-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 560px) {
+      .book-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="has-mobile-cta">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">Travel <span>Sri Lanka</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <nav class="nav-main">
+        <a href="index.html">Home</a>
+        <a href="destinations.html">Destinations</a>
+        <a href="booking.html" class="active">Book</a>
+        <a href="food.html">Food</a>
+        <a href="culture.html">Culture</a>
+        <a href="practical.html">Visa & Info</a>
+        <a href="my-trips.html">My Trips</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-hero">
+    <h1>Book Your Sri Lanka Trip</h1>
+    <p>Search live availability from trusted travel providers for hotels, activities, and flights.</p>
+  </div>
+
+  <main class="booking-wrap">
+    <div class="booking-grid">
+      <section class="book-card">
+        <h2>Live Booking Search</h2>
+        <p>Enter your trip details and launch real-time partner search results.</p>
+        <form id="bookingHubForm" class="book-form">
+          <div>
+            <label for="bookDestination">Destination</label>
+            <select id="bookDestination" required></select>
+          </div>
+          <div class="book-row">
+            <div>
+              <label for="checkIn">Check-in</label>
+              <input id="checkIn" type="date" required>
+            </div>
+            <div>
+              <label for="checkOut">Check-out</label>
+              <input id="checkOut" type="date" required>
+            </div>
+          </div>
+          <div class="book-row">
+            <div>
+              <label for="guests">Guests</label>
+              <select id="guests">
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </div>
+            <div>
+              <label for="fromCity">Flying From (optional)</label>
+              <input id="fromCity" type="text" placeholder="New York">
+            </div>
+          </div>
+          <div class="book-actions">
+            <button type="button" class="book-btn primary" id="openHotels">Find Hotels</button>
+            <button type="button" class="book-btn secondary" id="openActivities">Find Activities</button>
+            <button type="button" class="book-btn secondary" id="openFlights">Find Flights</button>
+          </div>
+          <p class="tiny-note">Links open in a new tab. Prices and availability are provided by external partners.</p>
+        </form>
+      </section>
+
+      <section class="book-card">
+        <h2>Booking Partners</h2>
+        <div class="provider-list">
+          <article class="provider">
+            <h3>Hotels</h3>
+            <p>Booking.com hotel search opens with your destination and stay dates prefilled.</p>
+          </article>
+          <article class="provider">
+            <h3>Experiences</h3>
+            <p>GetYourGuide activity search opens for your selected destination.</p>
+          </article>
+          <article class="provider">
+            <h3>Flights</h3>
+            <p>Google Flights opens with your dates and destination to compare options quickly.</p>
+          </article>
+          <article class="provider">
+            <h3>Need human help?</h3>
+            <p>Use <a href="contact.html">Contact</a> for itinerary review, budget balancing, and booking advice.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    © 2025 Surendra Koththigoda. For informational purposes only. Check official sources for visa and travel requirements.<br>
+    Contact: <a href="tel:+1 8608349088" style="color:inherit;">+1 860 834 9088</a>
+  </footer>
+
+  <a href="contact.html" class="mobile-sticky-cta">Plan My Trip</a>
+  <script src="assets/js/site-enhancements.js" defer></script>
+  <script>
+    document.querySelector(".menu-toggle")?.addEventListener("click", function () {
+      document.querySelector(".nav-main").classList.toggle("open");
+    });
+
+    const destinationEl = document.getElementById("bookDestination");
+    const checkInEl = document.getElementById("checkIn");
+    const checkOutEl = document.getElementById("checkOut");
+    const guestsEl = document.getElementById("guests");
+    const fromCityEl = document.getElementById("fromCity");
+
+    const CITY_GROUPS = [
+      {
+        group: "Top Picks",
+        items: [
+          "Kandy","Sigiriya","Ella","Nuwara Eliya","Galle","Mirissa",
+          "Yala","Udawalawe","Dambulla","Anuradhapura","Polonnaruwa",
+          "Trincomalee","Jaffna","Horton Plains","Adam's Peak",
+          "Sinharaja","Arugam Bay","Hikkaduwa","Bentota","Knuckles"
+        ]
+      },
+      {
+        group: "Cultural Triangle",
+        items: ["Sigiriya","Dambulla","Anuradhapura","Polonnaruwa","Habarana","Minneriya","Kaudulla"]
+      },
+      {
+        group: "Hill Country",
+        items: ["Kandy","Nuwara Eliya","Ella","Haputale","Badulla","Hatton","Knuckles","Horton Plains"]
+      },
+      {
+        group: "South Coast",
+        items: ["Galle","Unawatuna","Hikkaduwa","Weligama","Mirissa","Matara","Tangalle","Bentota","Beruwala"]
+      },
+      {
+        group: "East Coast",
+        items: ["Trincomalee","Nilaveli","Pasikuda","Batticaloa","Arugam Bay"]
+      },
+      {
+        group: "Wildlife & Nature",
+        items: ["Yala","Udawalawe","Wilpattu","Sinharaja","Kitulgala"]
+      },
+      {
+        group: "Colombo & West",
+        items: ["Colombo","Negombo","Kalutara","Gampaha","Puttalam","Kalpitiya"]
+      },
+      {
+        group: "North",
+        items: ["Jaffna","Kilinochchi","Mannar","Vavuniya"]
+      }
+    ];
+
+    function renderDestinationOptions() {
+      destinationEl.innerHTML = "";
+      const seen = new Set();
+
+      CITY_GROUPS.forEach(function (group) {
+        const optgroup = document.createElement("optgroup");
+        optgroup.label = group.group;
+
+        group.items.forEach(function (city) {
+          if (seen.has(city)) return;
+          seen.add(city);
+          const option = document.createElement("option");
+          option.value = city;
+          option.textContent = city;
+          optgroup.appendChild(option);
+        });
+
+        destinationEl.appendChild(optgroup);
+      });
+
+      destinationEl.value = "Kandy";
+    }
+
+    renderDestinationOptions();
+
+    function getData() {
+      const destination = destinationEl.value.trim();
+      const checkIn = checkInEl.value;
+      const checkOut = checkOutEl.value;
+      const guests = guestsEl.value;
+      const fromCity = fromCityEl.value.trim();
+
+      if (!destination || !checkIn || !checkOut) {
+        alert("Please fill destination, check-in, and check-out.");
+        return null;
+      }
+      if (checkOut <= checkIn) {
+        alert("Check-out must be after check-in.");
+        return null;
+      }
+      return { destination, checkIn, checkOut, guests, fromCity };
+    }
+
+    function openInNewTab(url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    document.getElementById("openHotels").addEventListener("click", function () {
+      const data = getData();
+      if (!data) return;
+      const dIn = new Date(data.checkIn);
+      const dOut = new Date(data.checkOut);
+      const url = new URL("https://www.booking.com/searchresults.html");
+      url.searchParams.set("ss", data.destination + ", Sri Lanka");
+      url.searchParams.set("checkin_year", String(dIn.getUTCFullYear()));
+      url.searchParams.set("checkin_month", String(dIn.getUTCMonth() + 1));
+      url.searchParams.set("checkin_monthday", String(dIn.getUTCDate()));
+      url.searchParams.set("checkout_year", String(dOut.getUTCFullYear()));
+      url.searchParams.set("checkout_month", String(dOut.getUTCMonth() + 1));
+      url.searchParams.set("checkout_monthday", String(dOut.getUTCDate()));
+      url.searchParams.set("group_adults", data.guests);
+      window.trackEvent?.("booking_hotels_click", { destination: data.destination, guests: Number(data.guests) });
+      openInNewTab(url.toString());
+    });
+
+    document.getElementById("openActivities").addEventListener("click", function () {
+      const data = getData();
+      if (!data) return;
+      const url = "https://www.getyourguide.com/s/?q=" + encodeURIComponent(data.destination + " Sri Lanka");
+      window.trackEvent?.("booking_activities_click", { destination: data.destination });
+      openInNewTab(url);
+    });
+
+    document.getElementById("openFlights").addEventListener("click", function () {
+      const data = getData();
+      if (!data) return;
+      const from = data.fromCity || "New York";
+      const to = data.destination;
+      const flightUrl =
+        "https://www.google.com/travel/flights?hl=en#flt=" +
+        encodeURIComponent(from) + "." + encodeURIComponent(to) + "." + data.checkIn +
+        "*" + encodeURIComponent(to) + "." + encodeURIComponent(from) + "." + data.checkOut;
+      window.trackEvent?.("booking_flights_click", { destination: data.destination, from_city: from });
+      openInNewTab(flightUrl);
+    });
+  </script>
+</body>
+</html>
