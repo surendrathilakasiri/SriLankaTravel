@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Trips | Sri Lanka Travel</title>
+  <meta name="description" content="View and manage your saved Sri Lanka itineraries.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .my-trips-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem;
+    }
+    .trip-list {
+      display: grid;
+      gap: 14px;
+    }
+    .trip-card {
+      background: #fff;
+      border: 1px solid #dde7f0;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 10px 24px rgba(10, 61, 98, 0.08);
+    }
+    .trip-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .trip-head h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: #0b1b2a;
+    }
+    .trip-meta {
+      margin: 0;
+      font-size: 0.86rem;
+      color: #4f5f6f;
+      line-height: 1.5;
+    }
+    .trip-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .trip-btn {
+      border: 1px solid rgba(10, 61, 98, 0.28);
+      background: rgba(10, 61, 98, 0.08);
+      color: #0a3d62;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .trip-btn.danger {
+      background: rgba(176, 0, 32, 0.08);
+      border-color: rgba(176, 0, 32, 0.32);
+      color: #b00020;
+    }
+    .empty-box {
+      background: #fff;
+      border: 1px dashed #c9d7e5;
+      border-radius: 14px;
+      padding: 18px;
+      color: #4f5f6f;
+    }
+    @media (max-width: 768px) {
+      .my-trips-wrap {
+        padding: 1.25rem 1rem 4rem;
+      }
+    }
+  </style>
+</head>
+<body class="has-mobile-cta">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">Travel <span>Sri Lanka</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <nav class="nav-main">
+        <a href="index.html">Home</a>
+        <a href="destinations.html">Destinations</a>
+        <a href="food.html">Food</a>
+        <a href="culture.html">Culture</a>
+        <a href="practical.html">Visa & Info</a>
+        <a href="my-trips.html" class="active">My Trips</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-hero">
+    <h1>My Saved Trips</h1>
+    <p>Your saved itinerary drafts from this browser. Edit, contact an expert, or remove old plans.</p>
+  </div>
+
+  <main class="my-trips-wrap">
+    <div id="tripsRoot" class="trip-list"></div>
+  </main>
+
+  <footer class="site-footer">
+    © 2025 Surendra Koththigoda. For informational purposes only. Check official sources for visa and travel requirements.<br>
+    Contact: <a href="tel:+1 8608349088" style="color:inherit;">+1 860 834 9088</a>
+  </footer>
+
+  <a href="contact.html" class="mobile-sticky-cta">Plan My Trip</a>
+  <script src="assets/js/site-enhancements.js" defer></script>
+  <script>
+    document.querySelector(".menu-toggle")?.addEventListener("click", function () {
+      document.querySelector(".nav-main").classList.toggle("open");
+    });
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (m) {
+        return ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          "\"": "&quot;",
+          "'": "&#39;"
+        })[m];
+      });
+    }
+
+    function loadTrips() {
+      const root = document.getElementById("tripsRoot");
+      const trips = JSON.parse(localStorage.getItem("saved_itineraries") || "[]");
+
+      if (!trips.length) {
+        root.innerHTML = `
+          <div class="empty-box">
+            <strong>No saved trips yet.</strong><br>
+            Generate an itinerary on the homepage and click "Save Itinerary".
+          </div>
+        `;
+        return;
+      }
+
+      root.innerHTML = trips.map(function (entry, i) {
+        const cities = Array.isArray(entry.trip?.cities) ? entry.trip.cities.join(", ") : "N/A";
+        const days = entry.trip?.days || "N/A";
+        const travelers = entry.trip?.travelers || "N/A";
+        const style = entry.trip?.style || "N/A";
+        const title = entry.itinerary?.title || "Sri Lanka itinerary";
+        const summary = entry.itinerary?.summary || "";
+        const created = new Date(entry.createdAt);
+        const safeDate = isNaN(created.getTime()) ? "Unknown date" : created.toLocaleString();
+
+        const message = [
+          "Hi, I need help with a saved itinerary draft.",
+          "",
+          "Title: " + title,
+          "Cities: " + cities,
+          "Days: " + days,
+          "Travelers: " + travelers,
+          "Style: " + style,
+          "",
+          "Summary:",
+          summary
+        ].join("\n");
+
+        const params = new URLSearchParams({
+          topic: "Saved itinerary review request",
+          message: message,
+          source: "my-trips"
+        });
+
+        return `
+          <article class="trip-card">
+            <div class="trip-head">
+              <div>
+                <h3>${escapeHtml(title)}</h3>
+                <p class="trip-meta">
+                  Saved: ${escapeHtml(safeDate)}<br>
+                  Cities: ${escapeHtml(cities)} | Days: ${escapeHtml(days)} | Travelers: ${escapeHtml(travelers)} | Style: ${escapeHtml(style)}
+                </p>
+              </div>
+            </div>
+            ${summary ? `<p class="trip-meta">${escapeHtml(summary)}</p>` : ``}
+            <div class="trip-actions">
+              <a class="trip-btn" href="contact.html?${params.toString()}">Send to Expert</a>
+              <button class="trip-btn danger" data-remove="${i}">Remove</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      root.querySelectorAll("[data-remove]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const idx = Number(btn.getAttribute("data-remove"));
+          const current = JSON.parse(localStorage.getItem("saved_itineraries") || "[]");
+          current.splice(idx, 1);
+          localStorage.setItem("saved_itineraries", JSON.stringify(current));
+          window.trackEvent?.("saved_trip_removed", { index: idx });
+          loadTrips();
+        });
+      });
+    }
+
+    window.trackEvent?.("my_trips_page_view", { location: window.location.pathname });
+    loadTrips();
+  </script>
+</body>
+</html>

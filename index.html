@@ -791,6 +791,7 @@
           <div class="result-actions">
             <button type="button" class="action-btn action-save" data-action="save-itinerary">Save Itinerary</button>
             <button type="button" class="action-btn action-contact" data-action="send-expert">Send to Expert</button>
+            <a href="my-trips.html" class="action-btn action-save" data-action="view-saved">View Saved Trips</a>
           </div>
         </div>
       `;
@@ -817,6 +818,10 @@
       });
       localStorage.setItem("saved_itineraries", JSON.stringify(saved.slice(0, 10)));
       statusEl.textContent = "Saved ✅ Itinerary added to this browser.";
+      window.trackEvent?.("itinerary_saved", {
+        city_count: snapshot.cities.length || 0,
+        days: Number(snapshot.days || 0)
+      });
     }
 
     function sendToExpert() {
@@ -838,19 +843,25 @@
         message,
         source: "home-itinerary"
       });
+      window.trackEvent?.("itinerary_send_to_expert_click", {
+        city_count: snapshot.cities.length || 0,
+        days: Number(snapshot.days || 0)
+      });
       window.location.href = `contact.html?${params.toString()}`;
     }
 
     form?.addEventListener("submit", async (e) => {
       e.preventDefault();
       resultEl.innerHTML = "";
+      statusEl.style.color = "#000";
       statusEl.textContent = "Generating your itinerary…";
 
       const fd = new FormData(form);
 
       const cities = fd.getAll("cities").map(x => String(x).trim()).filter(Boolean);
       if (!cities.length) {
-        statusEl.textContent = "❌ Please select at least one city (default is Kandy).";
+        statusEl.style.color = "#fff";
+        statusEl.textContent = "❌ Please select at least one city.";
         return;
       }
 
@@ -877,10 +888,22 @@
         }
 
         const data = await res.json();
+        statusEl.style.color = "#000";
         statusEl.textContent = "Done ✅ Your itinerary is ready.";
+        window.trackEvent?.("itinerary_generated_success", {
+          city_count: cities.length,
+          days: Number(payload.days || 0),
+          travelers: Number(payload.travelers || 0),
+          style: String(payload.style || "")
+        });
         renderItinerary(data);
       } catch (err) {
+        statusEl.style.color = "#fff";
         statusEl.textContent = "Error ❌ Could not generate itinerary.";
+        window.trackEvent?.("itinerary_generated_error", {
+          city_count: cities.length,
+          days: Number(payload.days || 0)
+        });
         resultEl.innerHTML = `
           <div class="result-card">
             <h3>Something went wrong</h3>
@@ -894,6 +917,11 @@
       const action = e.target?.dataset?.action;
       if (action === "save-itinerary") saveCurrentItinerary();
       if (action === "send-expert") sendToExpert();
+      if (action === "view-saved") {
+        window.trackEvent?.("view_saved_trips_click", {
+          location: "home_result_card"
+        });
+      }
     });
   </script>
   <script src="assets/js/city.js"></script>

@@ -367,7 +367,8 @@
             <button type="submit" class="btn-submit">Send Message</button>
             <p id="formStatus" class="form-note" aria-live="polite"></p>
             <p class="form-note">
-              By submitting, you agree we can reply to your email. We never share your info.
+              By submitting, you agree we can reply to your email. We never share your info. See
+              <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms</a>.
             </p>
           </div>
         </form>
@@ -410,6 +411,8 @@
     const contactForm = document.getElementById("contactForm");
     const formStatus = document.getElementById("formStatus");
     const params = new URLSearchParams(window.location.search);
+    const messageField = document.getElementById("message");
+    const topicField = document.getElementById("topic");
 
     const prefillName = params.get("name");
     const prefillEmail = params.get("email");
@@ -419,14 +422,29 @@
 
     if (prefillName) document.getElementById("name").value = prefillName;
     if (prefillEmail) document.getElementById("email").value = prefillEmail;
-    if (prefillTopic) document.getElementById("topic").value = prefillTopic;
-    if (prefillMessage) document.getElementById("message").value = prefillMessage;
+    if (prefillTopic) topicField.value = prefillTopic;
+    if (prefillMessage) messageField.value = prefillMessage;
     if (!prefillTopic && source === "home-itinerary") {
-      document.getElementById("topic").value = "Itinerary review request";
+      topicField.value = "Itinerary review request";
     }
 
     contactForm?.addEventListener("submit", async function (e) {
       e.preventDefault();
+      const now = Date.now();
+      const lastSubmit = Number(localStorage.getItem("contact_last_submit_ts") || 0);
+      const cooldownMs = 30000;
+
+      if (now - lastSubmit < cooldownMs) {
+        formStatus.style.color = "#b00020";
+        formStatus.textContent = "Please wait a few seconds before sending another message.";
+        return;
+      }
+
+      if ((messageField.value || "").trim().length < 15) {
+        formStatus.style.color = "#b00020";
+        formStatus.textContent = "Please add a bit more detail (at least 15 characters).";
+        return;
+      }
 
       const submitBtn = contactForm.querySelector(".btn-submit");
       const originalText = submitBtn.textContent;
@@ -436,6 +454,7 @@
 
       try {
         const formData = new FormData(contactForm);
+        formData.append("source", source || "contact-page");
         const response = await fetch("https://formsubmit.co/ajax/surendrakoththigoda@gmail.com", {
           method: "POST",
           body: formData
@@ -443,12 +462,21 @@
 
         if (!response.ok) throw new Error("submit-failed");
 
+        localStorage.setItem("contact_last_submit_ts", String(now));
         formStatus.style.color = "#0b6e4f";
         formStatus.textContent = "Form submitted successfully.";
+        window.trackEvent?.("contact_submit_success", {
+          topic: topicField.value || "unspecified",
+          source: source || "contact-page"
+        });
         contactForm.reset();
       } catch (err) {
         formStatus.style.color = "#b00020";
         formStatus.textContent = "Could not submit right now. Please try again.";
+        window.trackEvent?.("contact_submit_error", {
+          topic: topicField.value || "unspecified",
+          source: source || "contact-page"
+        });
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
