@@ -23,7 +23,7 @@ Run this SQL in Supabase SQL Editor:
 ```sql
 create table if not exists public.community_updates (
   id uuid primary key default gen_random_uuid(),
-  category text not null check (category in ('tax','hotel-price','place','event')),
+  category text not null check (category in ('taxi-fee','tax','hotel-price','place','event')),
   city text not null,
   title text not null,
   details text not null,

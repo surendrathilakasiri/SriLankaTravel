@@ -5,7 +5,7 @@ function clean(v) {
 }
 
 function validCategory(v) {
-  return ["tax", "hotel-price", "place", "event"].includes(v);
+  return ["taxi-fee", "tax", "hotel-price", "place", "event"].includes(v);
 }
 
 function validEmail(v) {
