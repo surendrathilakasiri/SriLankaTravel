@@ -5,6 +5,7 @@ This project now supports a moderated live updates workflow:
 1. Public submit form: `submit-update.html`
 2. Admin moderation: `admin-updates.html`
 3. Approved feed: `live-updates.html`
+4. Trusted auto-feed (no approval): `/api/trusted-feed`
 
 ## Vercel Environment Variables
 
@@ -15,6 +16,15 @@ Set these in Vercel Project Settings -> Environment Variables:
 - `SUPABASE_SERVICE_ROLE_KEY` (optional but recommended)
 
 If Supabase variables are not set, the API uses an in-memory fallback (non-persistent).
+
+Optional trusted-feed source override:
+
+- `LIVE_FEED_SOURCES` as JSON array:
+```json
+[
+  {"name":"Google News (Sri Lanka Travel)","type":"rss","url":"https://news.google.com/rss/search?q=Sri+Lanka+travel"}
+]
+```
 
 ## Supabase Table SQL
 
@@ -46,6 +56,7 @@ create index if not exists idx_community_updates_status_created
 
 - `POST /api/update-submissions` -> create pending update
 - `GET /api/live-data` -> list approved updates
+- `GET /api/trusted-feed` -> list trusted-source automatic feed (no moderation)
 - `GET /api/admin/updates` -> list pending updates (admin token required)
 - `PATCH /api/admin/updates` -> approve/reject update (admin token required)
 

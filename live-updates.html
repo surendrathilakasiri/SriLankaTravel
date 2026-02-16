@@ -41,13 +41,13 @@
 
   <div class="page-hero">
     <h1>Live Travel Updates</h1>
-    <p>Community-submitted updates reviewed by admin before going live.</p>
+    <p>Trusted-source auto feed updates instantly on this page. No approval flow required.</p>
   </div>
 
   <main class="live-wrap">
     <div class="live-head">
       <p id="sourceMeta">Loading updates...</p>
-      <a class="btn-mini" href="submit-update.html">Submit an Update</a>
+      <span class="btn-mini" style="cursor:default; opacity:.9;">Auto Feed</span>
     </div>
     <div id="liveGrid" class="live-grid"></div>
   </main>
@@ -74,35 +74,47 @@
       return map[c] || c;
     }
 
+    function renderCard(it) {
+      const sourceHtml = it.source_url
+        ? `<p class="live-meta" style="margin-top:8px;"><a href="${esc(it.source_url)}" target="_blank" rel="noopener">Source</a></p>`
+        : "";
+      const price = it.price_info ? esc(it.price_info) : "N/A";
+      const dateLabel = new Date(it.created_at).toLocaleDateString();
+      const autoBadge = it.auto_feed ? " • Auto Feed" : "";
+      const details = esc(it.details || "");
+
+      return `
+        <article class="live-card">
+          <span class="tag">${esc(fmtCategory(it.category))}${autoBadge ? ` ${esc(autoBadge)}` : ""}</span>
+          <h3>${esc(it.title)}</h3>
+          <p class="live-meta">City: ${esc(it.city)} • Price (US$): ${price} • Date: ${esc(dateLabel)}</p>
+          <p class="live-text">Details: ${details}</p>
+          ${sourceHtml}
+        </article>
+      `;
+    }
+
     async function loadUpdates() {
       const root = document.getElementById("liveGrid");
       const meta = document.getElementById("sourceMeta");
       try {
-        const res = await fetch("/api/live-data");
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Failed to load updates");
+        const trustedRes = await fetch("/api/trusted-feed");
+        const data = await trustedRes.json().catch(() => ({}));
+        if (!trustedRes.ok) throw new Error(data.error || "Failed to load trusted feed");
+        const trustedItems = Array.isArray(data.items) ? data.items : [];
 
-        meta.textContent = `Source: ${data.source || "unknown"} • ${data.items.length} approved updates`;
+        const all = [...trustedItems]
+          .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+          .slice(0, 80);
 
-        if (!data.items.length) {
-          root.innerHTML = '<div class="live-card"><p class="live-text">No approved updates yet. Be the first to submit one.</p></div>';
+        meta.textContent = `Trusted auto: ${trustedItems.length} • Auto-refresh: 60s`;
+
+        if (!all.length) {
+          root.innerHTML = '<div class="live-card"><p class="live-text">No updates available right now.</p></div>';
           return;
         }
 
-        root.innerHTML = data.items.map(function (it) {
-          const source = it.source_url ? `<a href="${esc(it.source_url)}" target="_blank" rel="noopener">Source</a>` : "";
-          const price = it.price_info ? esc(it.price_info) : "N/A";
-          const dateLabel = new Date(it.created_at).toLocaleDateString();
-          return `
-            <article class="live-card">
-              <span class="tag">${esc(fmtCategory(it.category))}</span>
-              <h3>${esc(it.title)}</h3>
-              <p class="live-meta">City: ${esc(it.city)}         • Price (US$): ${price}      • Date: ${esc(dateLabel)}</p>
-              <p class="live-text">Details : ${esc(it.details)}</p>
-              <p class="live-meta" style="margin-top:8px;">${source}</p>
-            </article>
-          `;
-        }).join("");
+        root.innerHTML = all.map(renderCard).join("");
       } catch (err) {
         meta.textContent = "Could not load live updates right now.";
         root.innerHTML = `<div class="live-card"><p class="live-text">${esc(err.message || "Unknown error")}</p></div>`;
@@ -111,6 +123,7 @@
 
     window.trackEvent?.("live_updates_page_view", { location: window.location.pathname });
     loadUpdates();
+    setInterval(loadUpdates, 60000);
   </script>
 </body>
 </html>
