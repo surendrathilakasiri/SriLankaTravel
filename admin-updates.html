@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Updates Review | Sri Lanka Travel</title>
+  <meta name="description" content="Admin moderation queue for travel updates.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .admin-wrap { max-width: 1120px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    .admin-card { background:#fff; border:1px solid #dbe7f1; border-radius:14px; padding:14px; box-shadow:0 10px 26px rgba(10,61,98,.08); }
+    .queue { display:grid; gap:10px; margin-top:12px; }
+    .item { border:1px solid #dbe7f1; border-radius:12px; padding:12px; }
+    .item h3 { margin:0 0 6px; color:#0b1b2a; font-size:1rem; }
+    .meta { margin:0 0 7px; color:#596a7a; font-size:.85rem; }
+    .txt { margin:0; color:#2a3f54; font-size:.93rem; }
+    .actions { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+    .btn { border:none; border-radius:10px; padding:9px 11px; font-size:.82rem; font-weight:900; cursor:pointer; }
+    .approve { background:#0b6e4f; color:#fff; }
+    .reject { background:#b00020; color:#fff; }
+    .top { display:grid; grid-template-columns:1fr auto; gap:8px; }
+    .top input { border:1px solid #cfdeec; border-radius:10px; padding:10px; }
+  </style>
+</head>
+<body class="has-mobile-cta">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">Travel <span>Sri Lanka</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <nav class="nav-main">
+        <a href="index.html">Home</a>
+        <a href="live-updates.html" class="active">Live Updates</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-hero">
+    <h1>Admin Review Queue</h1>
+    <p>Approve or reject pending community updates.</p>
+  </div>
+
+  <main class="admin-wrap">
+    <div class="admin-card">
+      <div class="top">
+        <input id="adminToken" placeholder="Enter UPDATE_ADMIN_TOKEN">
+        <button class="btn approve" id="loadBtn">Load Pending</button>
+      </div>
+      <p id="status" class="meta">Token required to access moderation queue.</p>
+      <div id="queue" class="queue"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">© 2025 Surendra Koththigoda. For informational purposes only.</footer>
+  <script>
+    document.querySelector(".menu-toggle")?.addEventListener("click", function () {
+      document.querySelector(".nav-main").classList.toggle("open");
+    });
+
+    const queue = document.getElementById("queue");
+    const statusEl = document.getElementById("status");
+    const tokenEl = document.getElementById("adminToken");
+
+    function esc(v) {
+      return String(v || "").replace(/[&<>\"']/g, function (m) {
+        return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[m];
+      });
+    }
+
+    async function fetchPending() {
+      const token = tokenEl.value.trim();
+      if (!token) {
+        statusEl.textContent = "Please enter admin token.";
+        return;
+      }
+      statusEl.textContent = "Loading pending updates...";
+      queue.innerHTML = "";
+
+      const res = await fetch("/api/admin/updates", {
+        headers: { "x-admin-token": token }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        statusEl.textContent = data.error || "Could not load queue.";
+        return;
+      }
+
+      statusEl.textContent = `Loaded ${data.items.length} pending updates.`;
+      if (!data.items.length) {
+        queue.innerHTML = '<div class="item"><p class="txt">No pending updates.</p></div>';
+        return;
+      }
+
+      queue.innerHTML = data.items.map(function (it) {
+        return `
+          <article class="item" data-id="${esc(it.id)}">
+            <h3>${esc(it.title)}</h3>
+            <p class="meta">${esc(it.category)} • ${esc(it.city)} • ${new Date(it.created_at).toLocaleString()}</p>
+            <p class="txt">${esc(it.details)}</p>
+            <div class="actions">
+              <button class="btn approve" data-act="approve">Approve</button>
+              <button class="btn reject" data-act="reject">Reject</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    async function moderate(id, action) {
+      const token = tokenEl.value.trim();
+      const res = await fetch("/api/admin/updates", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-token": token
+        },
+        body: JSON.stringify({ id, status: action, reviewer: "admin-ui" })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data.error || "Action failed");
+        return;
+      }
+      fetchPending();
+    }
+
+    document.getElementById("loadBtn").addEventListener("click", fetchPending);
+
+    queue.addEventListener("click", function (e) {
+      const act = e.target?.dataset?.act;
+      if (!act) return;
+      const card = e.target.closest("[data-id]");
+      if (!card) return;
+      moderate(card.getAttribute("data-id"), act === "approve" ? "approved" : "rejected");
+    });
+  </script>
+</body>
+</html>

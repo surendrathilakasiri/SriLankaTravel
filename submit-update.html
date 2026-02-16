@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Update | Sri Lanka Travel</title>
+  <meta name="description" content="Submit travel updates for moderation: taxes, prices, places, and events.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .submit-wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    .submit-card { background:#fff; border:1px solid #dbe7f1; border-radius:14px; padding:16px; box-shadow:0 12px 30px rgba(10,61,98,.08); }
+    .fgrid { display:grid; gap:10px; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    label { display:block; margin-bottom:6px; font-size:.78rem; text-transform:uppercase; letter-spacing:.09em; font-weight:900; color:#11263d; }
+    input, select, textarea { width:100%; border:1px solid #cfdeec; border-radius:10px; padding:10px 11px; font-size:.95rem; background:#f9fcff; color:#11263d; outline:none; }
+    textarea { min-height:130px; resize:vertical; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:2px; }
+    .btnx { border:none; border-radius:10px; padding:11px 14px; font-size:.9rem; font-weight:900; cursor:pointer; }
+    .btnx.primary { background:linear-gradient(135deg,#0a3d62,#1e5f8c); color:#fff; }
+    .status { margin:0; font-size:.9rem; font-weight:800; }
+    @media (max-width: 700px) { .row { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body class="has-mobile-cta">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">Travel <span>Sri Lanka</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <nav class="nav-main">
+        <a href="index.html">Home</a>
+        <a href="destinations.html">Destinations</a>
+        <a href="booking.html">Book</a>
+        <a href="live-updates.html" class="active">Live Updates</a>
+        <a href="food.html">Food</a>
+        <a href="culture.html">Culture</a>
+        <a href="practical.html">Visa & Info</a>
+        <a href="my-trips.html">My Trips</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-hero">
+    <h1>Submit a Travel Update</h1>
+    <p>Contribute verified updates. All submissions go through moderation before publishing.</p>
+  </div>
+
+  <main class="submit-wrap">
+    <div class="submit-card">
+      <form id="updateForm" class="fgrid">
+        <div class="row">
+          <div>
+            <label for="cat">Category</label>
+            <select id="cat" required>
+              <option value="event">Event</option>
+              <option value="hotel-price">Hotel Price</option>
+              <option value="tax">Tax / Fee</option>
+              <option value="place">Interesting Place</option>
+            </select>
+          </div>
+          <div>
+            <label for="city">City</label>
+            <input id="city" required placeholder="Kandy">
+          </div>
+        </div>
+
+        <div>
+          <label for="title">Title</label>
+          <input id="title" required placeholder="Hotel prices increased near Sigiriya this week">
+        </div>
+
+        <div>
+          <label for="details">Details</label>
+          <textarea id="details" required placeholder="What changed, when, and who is affected?"></textarea>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="price">Price / Tax Info (optional)</label>
+            <input id="price" placeholder="USD 45 per night">
+          </div>
+          <div>
+            <label for="sourceUrl">Source URL (optional)</label>
+            <input id="sourceUrl" placeholder="https://...">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="eventStart">Event Start (optional)</label>
+            <input id="eventStart" type="date">
+          </div>
+          <div>
+            <label for="eventEnd">Event End (optional)</label>
+            <input id="eventEnd" type="date">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="email">Your Email</label>
+            <input id="email" type="email" required placeholder="you@example.com">
+          </div>
+          <div style="display:none">
+            <label for="honey">Leave Empty</label>
+            <input id="honey" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btnx primary" type="submit">Submit for Review</button>
+          <a class="btnx" href="live-updates.html" style="text-decoration:none; border:1px solid #cfdeec; color:#0a3d62; background:#f4f9ff;">View Live Updates</a>
+        </div>
+        <p id="formStatus" class="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer">© 2025 Surendra Koththigoda. For informational purposes only.</footer>
+  <a href="contact.html" class="mobile-sticky-cta">Plan My Trip</a>
+  <script src="assets/js/site-enhancements.js" defer></script>
+  <script>
+    document.querySelector(".menu-toggle")?.addEventListener("click", function () {
+      document.querySelector(".nav-main").classList.toggle("open");
+    });
+
+    document.getElementById("updateForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const status = document.getElementById("formStatus");
+      status.style.color = "#0a3d62";
+      status.textContent = "Submitting...";
+
+      const payload = {
+        category: document.getElementById("cat").value,
+        city: document.getElementById("city").value,
+        title: document.getElementById("title").value,
+        details: document.getElementById("details").value,
+        price_info: document.getElementById("price").value,
+        source_url: document.getElementById("sourceUrl").value,
+        event_start: document.getElementById("eventStart").value,
+        event_end: document.getElementById("eventEnd").value,
+        submitter_email: document.getElementById("email").value,
+        _honey: document.getElementById("honey").value
+      };
+
+      try {
+        const res = await fetch("/api/update-submissions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || "Submit failed");
+
+        status.style.color = "#0b6e4f";
+        status.textContent = "Submitted successfully. It will appear after admin approval.";
+        window.trackEvent?.("community_update_submitted", { category: payload.category, city: payload.city });
+        e.target.reset();
+      } catch (err) {
+        status.style.color = "#b00020";
+        status.textContent = err.message || "Could not submit.";
+      }
+    });
+  </script>
+</body>
+</html>

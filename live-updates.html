@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Updates | Sri Lanka Travel</title>
+  <meta name="description" content="Real-time community updates for taxes, hotel prices, places, and events in Sri Lanka.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .live-wrap { max-width: 1120px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    .live-head { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+    .live-head p { margin:0; color:#4e6071; font-size:.92rem; }
+    .live-grid { display:grid; gap:12px; }
+    .live-card { background:#fff; border:1px solid #dbe7f1; border-radius:14px; padding:14px; box-shadow:0 10px 26px rgba(10,61,98,.08); }
+    .live-card h3 { margin:0 0 6px; color:#0b1b2a; font-size:1.05rem; }
+    .live-meta { margin:0 0 8px; color:#596a7a; font-size:.86rem; }
+    .live-text { margin:0; color:#283b50; font-size:.94rem; }
+    .tag { display:inline-flex; align-items:center; border-radius:999px; padding:4px 9px; font-size:.72rem; font-weight:900; text-transform:uppercase; letter-spacing:.08em; border:1px solid rgba(10,61,98,.2); background:rgba(10,61,98,.08); color:#0a3d62; }
+    .actions { margin-top:16px; }
+    .btn-mini { display:inline-flex; text-decoration:none; font-weight:900; font-size:.85rem; border-radius:10px; padding:9px 11px; background:linear-gradient(135deg,#0a3d62,#1e5f8c); color:#fff; }
+  </style>
+</head>
+<body class="has-mobile-cta">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">Travel <span>Sri Lanka</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+      <nav class="nav-main">
+        <a href="index.html">Home</a>
+        <a href="destinations.html">Destinations</a>
+        <a href="booking.html">Book</a>
+        <a href="live-updates.html" class="active">Live Updates</a>
+        <a href="food.html">Food</a>
+        <a href="culture.html">Culture</a>
+        <a href="practical.html">Visa & Info</a>
+        <a href="my-trips.html">My Trips</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-hero">
+    <h1>Live Travel Updates</h1>
+    <p>Community-submitted updates reviewed by admin before going live.</p>
+  </div>
+
+  <main class="live-wrap">
+    <div class="live-head">
+      <p id="sourceMeta">Loading updates...</p>
+      <a class="btn-mini" href="submit-update.html">Submit an Update</a>
+    </div>
+    <div id="liveGrid" class="live-grid"></div>
+  </main>
+
+  <footer class="site-footer">
+    © 2025 Surendra Koththigoda. For informational purposes only. Check official sources for visa and travel requirements.
+  </footer>
+
+  <a href="contact.html" class="mobile-sticky-cta">Plan My Trip</a>
+  <script src="assets/js/site-enhancements.js" defer></script>
+  <script>
+    document.querySelector(".menu-toggle")?.addEventListener("click", function () {
+      document.querySelector(".nav-main").classList.toggle("open");
+    });
+
+    function esc(v) {
+      return String(v || "").replace(/[&<>\"']/g, function (m) {
+        return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[m];
+      });
+    }
+
+    function fmtCategory(c) {
+      const map = {"tax":"Tax","hotel-price":"Hotel Price","place":"Place","event":"Event"};
+      return map[c] || c;
+    }
+
+    async function loadUpdates() {
+      const root = document.getElementById("liveGrid");
+      const meta = document.getElementById("sourceMeta");
+      try {
+        const res = await fetch("/api/live-data");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to load updates");
+
+        meta.textContent = `Source: ${data.source || "unknown"} • ${data.items.length} approved updates`;
+
+        if (!data.items.length) {
+          root.innerHTML = '<div class="live-card"><p class="live-text">No approved updates yet. Be the first to submit one.</p></div>';
+          return;
+        }
+
+        root.innerHTML = data.items.map(function (it) {
+          const source = it.source_url ? `<a href="${esc(it.source_url)}" target="_blank" rel="noopener">Source</a>` : "No source";
+          const price = it.price_info ? ` • ${esc(it.price_info)}` : "";
+          return `
+            <article class="live-card">
+              <span class="tag">${esc(fmtCategory(it.category))}</span>
+              <h3>${esc(it.title)}</h3>
+              <p class="live-meta">${esc(it.city)}${price} • ${new Date(it.created_at).toLocaleString()}</p>
+              <p class="live-text">${esc(it.details)}</p>
+              <p class="live-meta" style="margin-top:8px;">${source}</p>
+            </article>
+          `;
+        }).join("");
+      } catch (err) {
+        meta.textContent = "Could not load live updates right now.";
+        root.innerHTML = `<div class="live-card"><p class="live-text">${esc(err.message || "Unknown error")}</p></div>`;
+      }
+    }
+
+    window.trackEvent?.("live_updates_page_view", { location: window.location.pathname });
+    loadUpdates();
+  </script>
+</body>
+</html>
