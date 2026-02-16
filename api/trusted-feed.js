@@ -17,11 +17,39 @@ const CITY_KEYWORDS = [
 ];
 
 function cleanText(v) {
-  return String(v || "")
-    .replace(/<!\[CDATA\[|\]\]>/g, "")
-    .replace(/<[^>]*>/g, " ")
+  return normalizeWhitespace(stripTags(decodeHtmlEntities(String(v || "").replace(/<!\[CDATA\[|\]\]>/g, ""))));
+}
+
+function normalizeWhitespace(text) {
+  return String(text || "")
+    .replace(/\u00A0/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function stripTags(text) {
+  return String(text || "").replace(/<[^>]*>/g, " ");
+}
+
+function decodeHtmlEntities(text) {
+  const named = {
+    amp: "&",
+    lt: "<",
+    gt: ">",
+    quot: "\"",
+    apos: "'",
+    nbsp: " "
+  };
+
+  return String(text || "")
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&([a-zA-Z]+);/g, (match, name) => named[name] ?? match);
+}
+
+function cleanDescription(v) {
+  // Google News descriptions often contain escaped HTML; decode first, then remove markup.
+  return normalizeWhitespace(stripTags(decodeHtmlEntities(String(v || "").replace(/<!\[CDATA\[|\]\]>/g, ""))));
 }
 
 function getSources() {
@@ -64,7 +92,7 @@ function parseRss(xml, sourceName) {
 
   for (const raw of itemMatches.slice(0, 20)) {
     const title = extractTag(raw, "title");
-    const details = extractTag(raw, "description") || title;
+    const details = cleanDescription(extractTag(raw, "description")) || title;
     const link = extractTag(raw, "link");
     const pubDate = extractTag(raw, "pubDate") || new Date().toISOString();
     const combined = `${title} ${details}`;

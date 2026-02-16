@@ -10,14 +10,38 @@
     .live-wrap { max-width: 1120px; margin: 0 auto; padding: 2rem 1rem 4rem; }
     .live-head { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
     .live-head p { margin:0; color:#4e6071; font-size:.92rem; }
-    .live-grid { display:grid; gap:12px; }
-    .live-card { background:#fff; border:1px solid #dbe7f1; border-radius:14px; padding:14px; box-shadow:0 10px 26px rgba(10,61,98,.08); }
-    .live-card h3 { margin:0 0 6px; color:#0b1b2a; font-size:1.05rem; }
-    .live-meta { margin:0 0 8px; color:#596a7a; font-size:.86rem; }
-    .live-text { margin:0; color:#283b50; font-size:.94rem; }
+    .feed-tabs { display:flex; gap:8px; flex-wrap:wrap; margin: 0 0 14px; }
+    .feed-tab-btn {
+      border: 1px solid #c7d9ea;
+      background: #eff6fd;
+      color: #134569;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 800;
+      font-size: .84rem;
+      letter-spacing: .01em;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+    .feed-tab-btn.active {
+      background: linear-gradient(135deg,#0a3d62,#1e5f8c);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 6px 16px rgba(10,61,98,.25);
+    }
+    .live-grid { display:grid; gap:12px; grid-template-columns:minmax(0,1fr); }
+    .live-card { background:#fff; border:1px solid #dbe7f1; border-radius:14px; padding:14px; box-shadow:0 10px 26px rgba(10,61,98,.08); width:100%; min-width:0; overflow:hidden; }
+    .live-card h3 { margin:0 0 6px; color:#0b1b2a; font-size:1.05rem; overflow-wrap:anywhere; word-break:break-word; }
+    .live-meta { margin:0 0 8px; color:#596a7a; font-size:.86rem; overflow-wrap:anywhere; word-break:break-word; }
+    .live-text { margin:0; color:#283b50; font-size:.94rem; overflow-wrap:anywhere; word-break:break-word; }
+    .live-card a { overflow-wrap:anywhere; word-break:break-word; }
     .tag { display:inline-flex; align-items:center; border-radius:999px; padding:4px 9px; font-size:.72rem; font-weight:900; text-transform:uppercase; letter-spacing:.08em; border:1px solid rgba(10,61,98,.2); background:rgba(10,61,98,.08); color:#0a3d62; }
     .actions { margin-top:16px; }
     .btn-mini { display:inline-flex; text-decoration:none; font-weight:900; font-size:.85rem; border-radius:10px; padding:9px 11px; background:linear-gradient(135deg,#0a3d62,#1e5f8c); color:#fff; }
+    @media (max-width: 768px) {
+      .live-wrap { padding: 1.25rem .75rem 4rem; }
+      .live-card { padding: 12px; border-radius: 12px; }
+    }
   </style>
 </head>
 <body class="has-mobile-cta">
@@ -41,13 +65,18 @@
 
   <div class="page-hero">
     <h1>Live Travel Updates</h1>
-    <p>Trusted-source auto feed updates instantly on this page. No approval flow required.</p>
+    <p>Switch between trusted auto feed and community manual updates using the tabs below.</p>
   </div>
 
   <main class="live-wrap">
     <div class="live-head">
       <p id="sourceMeta">Loading updates...</p>
       <span class="btn-mini" style="cursor:default; opacity:.9;">Auto Feed</span>
+    </div>
+    <div class="feed-tabs" role="tablist" aria-label="Live update feed tabs">
+      <button id="tabAuto" class="feed-tab-btn active" role="tab" aria-selected="true">Auto Feed</button>
+      <button id="tabManual" class="feed-tab-btn" role="tab" aria-selected="false">Manual Feed</button>
+      <a href="submit-update.html" class="btn-mini">Submit Manual Update</a>
     </div>
     <div id="liveGrid" class="live-grid"></div>
   </main>
@@ -78,43 +107,109 @@
       const sourceHtml = it.source_url
         ? `<p class="live-meta" style="margin-top:8px;"><a href="${esc(it.source_url)}" target="_blank" rel="noopener">Source</a></p>`
         : "";
-      const price = it.price_info ? esc(it.price_info) : "N/A";
       const dateLabel = new Date(it.created_at).toLocaleDateString();
-      const autoBadge = it.auto_feed ? " • Auto Feed" : "";
       const details = esc(it.details || "");
+      const metaParts = [];
+      if (!it.auto_feed) {
+        if (it.city) metaParts.push(`City: ${esc(it.city)}`);
+        if (it.price_info && String(it.price_info).trim() && String(it.price_info).trim().toUpperCase() !== "N/A") {
+          metaParts.push(`Price (US$): ${esc(it.price_info)}`);
+        }
+      }
+      metaParts.push(`Date: ${esc(dateLabel)}`);
+      const metaLine = metaParts.join(" • ");
 
       return `
         <article class="live-card">
-          <span class="tag">${esc(fmtCategory(it.category))}${autoBadge ? ` ${esc(autoBadge)}` : ""}</span>
+          <span class="tag">${it.auto_feed ? "Auto Feed" : esc(fmtCategory(it.category))}</span>
           <h3>${esc(it.title)}</h3>
-          <p class="live-meta">City: ${esc(it.city)} • Price (US$): ${price} • Date: ${esc(dateLabel)}</p>
+          <p class="live-meta">${metaLine}</p>
           <p class="live-text">Details: ${details}</p>
           ${sourceHtml}
         </article>
       `;
     }
 
+    const liveState = {
+      activeTab: "auto",
+      autoItems: [],
+      manualItems: [],
+      counts: { auto: 0, manual: 0 }
+    };
+
+    function setTab(nextTab) {
+      const tabAuto = document.getElementById("tabAuto");
+      const tabManual = document.getElementById("tabManual");
+      liveState.activeTab = nextTab;
+      const counts = liveState.counts || { auto: 0, manual: 0 };
+      const isAuto = nextTab === "auto";
+      tabAuto.classList.toggle("active", isAuto);
+      tabAuto.setAttribute("aria-selected", isAuto ? "true" : "false");
+      tabManual.classList.toggle("active", !isAuto);
+      tabManual.setAttribute("aria-selected", isAuto ? "false" : "true");
+
+      const autoCount = counts.auto ?? 0;
+      const manualCount = counts.manual ?? 0;
+      tabAuto.textContent = `Auto Feed (${autoCount})`;
+      tabManual.textContent = `Manual Feed (${manualCount})`;
+    }
+
+    function renderByTab() {
+      const root = document.getElementById("liveGrid");
+      const meta = document.getElementById("sourceMeta");
+      const items = liveState.activeTab === "auto" ? liveState.autoItems : liveState.manualItems;
+      meta.textContent = liveState.activeTab === "auto"
+        ? `Trusted auto: ${liveState.autoItems.length} • Auto-refresh: 60s`
+        : `Community manual: ${liveState.manualItems.length} • Auto-refresh: 60s`;
+      if (!items.length) {
+        root.innerHTML = `<div class="live-card"><p class="live-text">No ${liveState.activeTab === "auto" ? "auto" : "manual"} updates available right now.</p></div>`;
+        return;
+      }
+      root.innerHTML = items.map(renderCard).join("");
+    }
+
+    function setupTabsOnce() {
+      if (window.__tabsBound) return;
+      window.__tabsBound = true;
+      const tabAuto = document.getElementById("tabAuto");
+      const tabManual = document.getElementById("tabManual");
+      tabAuto.addEventListener("click", () => {
+        setTab("auto");
+        renderByTab();
+      });
+      tabManual.addEventListener("click", () => {
+        setTab("manual");
+        renderByTab();
+      });
+    }
+
     async function loadUpdates() {
       const root = document.getElementById("liveGrid");
       const meta = document.getElementById("sourceMeta");
+      setupTabsOnce();
       try {
-        const trustedRes = await fetch("/api/trusted-feed");
-        const data = await trustedRes.json().catch(() => ({}));
-        if (!trustedRes.ok) throw new Error(data.error || "Failed to load trusted feed");
-        const trustedItems = Array.isArray(data.items) ? data.items : [];
+        const [trustedRes, manualRes] = await Promise.all([
+          fetch("/api/trusted-feed"),
+          fetch("/api/live-data")
+        ]);
+        const trustedData = await trustedRes.json().catch(() => ({}));
+        const manualData = await manualRes.json().catch(() => ({}));
+        if (!trustedRes.ok) throw new Error(trustedData.error || "Failed to load trusted feed");
+        if (!manualRes.ok) throw new Error(manualData.error || "Failed to load manual feed");
 
-        const all = [...trustedItems]
+        const trustedItems = Array.isArray(trustedData.items) ? trustedData.items : [];
+        const manualItems = Array.isArray(manualData.items) ? manualData.items : [];
+
+        liveState.autoItems = [...trustedItems]
           .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
           .slice(0, 80);
+        liveState.manualItems = [...manualItems]
+          .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+          .slice(0, 80);
+        liveState.counts = { auto: liveState.autoItems.length, manual: liveState.manualItems.length };
 
-        meta.textContent = `Trusted auto: ${trustedItems.length} • Auto-refresh: 60s`;
-
-        if (!all.length) {
-          root.innerHTML = '<div class="live-card"><p class="live-text">No updates available right now.</p></div>';
-          return;
-        }
-
-        root.innerHTML = all.map(renderCard).join("");
+        setTab(liveState.activeTab);
+        renderByTab();
       } catch (err) {
         meta.textContent = "Could not load live updates right now.";
         root.innerHTML = `<div class="live-card"><p class="live-text">${esc(err.message || "Unknown error")}</p></div>`;
