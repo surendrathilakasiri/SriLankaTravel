@@ -18,6 +18,7 @@
     .btn { border:none; border-radius:10px; padding:9px 11px; font-size:.82rem; font-weight:900; cursor:pointer; }
     .approve { background:#0b6e4f; color:#fff; }
     .reject { background:#b00020; color:#fff; }
+    .delete { background:#2f3b48; color:#fff; }
     .top { display:grid; grid-template-columns:1fr auto; gap:8px; }
     .top input { border:1px solid #cfdeec; border-radius:10px; padding:10px; }
   </style>
@@ -100,6 +101,7 @@
             <div class="actions">
               <button class="btn approve" data-act="approve">Approve</button>
               <button class="btn reject" data-act="reject">Reject</button>
+              <button class="btn delete" data-act="delete">Delete</button>
             </div>
           </article>
         `;
@@ -109,12 +111,16 @@
     async function moderate(id, action) {
       const token = tokenEl.value.trim();
       const res = await fetch("/api/admin/updates", {
-        method: "PATCH",
+        method: action === "delete" ? "DELETE" : "PATCH",
         headers: {
           "Content-Type": "application/json",
           "x-admin-token": token
         },
-        body: JSON.stringify({ id, status: action, reviewer: "admin-ui" })
+        body: JSON.stringify(
+          action === "delete"
+            ? { id }
+            : { id, status: action, reviewer: "admin-ui" }
+        )
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -131,6 +137,12 @@
       if (!act) return;
       const card = e.target.closest("[data-id]");
       if (!card) return;
+      if (act === "delete") {
+        const ok = window.confirm("Delete this update permanently?");
+        if (!ok) return;
+        moderate(card.getAttribute("data-id"), "delete");
+        return;
+      }
       moderate(card.getAttribute("data-id"), act === "approve" ? "approved" : "rejected");
     });
   </script>

@@ -90,14 +90,15 @@
         }
 
         root.innerHTML = data.items.map(function (it) {
-          const source = it.source_url ? `<a href="${esc(it.source_url)}" target="_blank" rel="noopener">Source</a>` : "No source";
-          const price = it.price_info ? ` • ${esc(it.price_info)}` : "";
+          const source = it.source_url ? `<a href="${esc(it.source_url)}" target="_blank" rel="noopener">Source</a>` : "";
+          const price = it.price_info ? esc(it.price_info) : "N/A";
+          const dateLabel = new Date(it.created_at).toLocaleDateString();
           return `
             <article class="live-card">
               <span class="tag">${esc(fmtCategory(it.category))}</span>
               <h3>${esc(it.title)}</h3>
-              <p class="live-meta">${esc(it.city)}${price} • ${new Date(it.created_at).toLocaleString()}</p>
-              <p class="live-text">${esc(it.details)}</p>
+              <p class="live-meta">City: ${esc(it.city)}         • Price (US$): ${price}      • Date: ${esc(dateLabel)}</p>
+              <p class="live-text">Details : ${esc(it.details)}</p>
               <p class="live-meta" style="margin-top:8px;">${source}</p>
             </article>
           `;

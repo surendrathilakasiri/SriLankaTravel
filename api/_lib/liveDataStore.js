@@ -156,6 +156,26 @@ export async function setStatus({ id, status, reviewer }) {
   return row;
 }
 
+export async function deleteUpdate(id) {
+  const cfg = supabaseConfig();
+  if (cfg) {
+    const rows = await supabaseFetch(
+      `community_updates?id=eq.${encodeURIComponent(id)}`,
+      {
+        method: "DELETE",
+        prefer: "return=representation"
+      }
+    );
+    return rows[0] || null;
+  }
+
+  const store = getMemoryStore();
+  const idx = store.findIndex((r) => String(r.id) === String(id));
+  if (idx === -1) return null;
+  const [removed] = store.splice(idx, 1);
+  return removed || null;
+}
+
 export function usingSupabase() {
   return Boolean(supabaseConfig());
 }
