@@ -100,7 +100,7 @@ body {
 
 .nav-main {
   display: flex;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   align-items: center;
 }
 
@@ -109,7 +109,7 @@ body {
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) 0.75rem;
   border-radius: var(--radius-sm);
   transition: var(--transition);
 }
