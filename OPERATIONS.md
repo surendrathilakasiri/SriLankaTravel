@@ -6,7 +6,7 @@ The Vercel project `surendra-koththigodas-projects/sri-lanka-travel` serves the 
 
 `npm run build` creates `dist/` from the explicit page list and referenced assets only. Vercel publishes that directory and separately bundles the functions in `api/`. Shared server code lives in `lib/`, outside public output and the API routing directory. Personal receipts, screenshots, tests and server source are excluded from static output.
 
-`netlify.toml` only prevents future Git-triggered builds on the retired host. Existing deployments and historical Netlify Forms records are retained until verified migration/archival is complete; do not delete them casually. Old deployment snapshots and Git history may still contain previously published files.
+`netlify.toml` only prevents future Git-triggered builds on the retired host. The three historical Netlify Forms messages were copied into the private Vercel contacts collection on 17 November 2026 with their original timestamps. The original records and old deployments are retained as rollback/archive copies; do not delete them casually. Old deployment snapshots and Git history may still contain previously published files.
 
 ## Services and settings
 
