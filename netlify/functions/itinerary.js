@@ -1,5 +1,6 @@
 // netlify/functions/itinerary.js
 import OpenAI from "openai";
+import { tripPreferences } from "../lib/itinerary-input.js";
 
 function clampInt(value, min, max) {
   const n = Number(value);
@@ -20,17 +21,24 @@ export const handler = async (event) => {
       return {
         statusCode: 500,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "OPENAI_API_KEY is missing in Netlify environment variables." })
+        body: JSON.stringify({ error: "The trip planner is temporarily unavailable. Please browse our suggested itineraries." })
       };
     }
 
-    const body = JSON.parse(event.body || "{}");
+    let body, preferences;
+    try {
+      body = JSON.parse(event.body || "{}");
+      if (!body || typeof body !== "object") throw new Error("Invalid request.");
+      preferences = tripPreferences(body);
+    } catch (error) {
+      return { statusCode: 400, headers: {"Content-Type":"application/json"}, body: JSON.stringify({error:error.message}) };
+    }
     const citiesRaw = body.cities;
     const travelers = clampInt(body.travelers, 1, 20);
     const days = clampInt(body.days, 1, 30);
     const style = String(body.style || "balanced").trim();
 
-    if (!Array.isArray(citiesRaw) || citiesRaw.length === 0) {
+    if (!Array.isArray(citiesRaw) || citiesRaw.length === 0 || citiesRaw.length > 12) {
       return {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
@@ -77,7 +85,7 @@ export const handler = async (event) => {
       }
     }
 
-    const client = new OpenAI({ apiKey });
+    const client = new OpenAI({ apiKey, timeout: 25000, maxRetries: 0 });
 
     const schemaRules = `
 Return ONLY valid JSON (no markdown, no extra text) in this exact shape:
@@ -102,6 +110,11 @@ Rules:
 - 2–4 activities per day, realistic travel times.
 - Mention train/bus/tuk-tuk/private car options where relevant.
 - Include one local food suggestion per day.
+- Begin at the arrival point; include transfer time and avoid packing long transfers with full activity days.
+- Match the month, pace, interests and budget. Budget is USD per person per day, excluding international flights.
+- When the route is too ambitious, suggest fewer stops in the summary rather than impossible travel times.
+- Clearly call all prices and journey times planning estimates. Never claim live availability, verified prices, or confirmed bookings.
+- Include a reminder to check official entry rules and transport schedules. Produce exactly the requested number of days.
 `;
 
     const prompt = `
@@ -113,6 +126,7 @@ ${cities.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 Trip length (days): ${days}
 Travelers: ${travelers}
 Style: ${style}
+Planning preferences: ${JSON.stringify(preferences)}
 
 ${schemaRules}
 `;
@@ -120,7 +134,8 @@ ${schemaRules}
     const resp = await client.responses.create({
       model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
       input: prompt,
-      temperature: 0.6
+      temperature: 0.6,
+      max_output_tokens: 6000
     });
 
     const text = (resp.output_text || "").trim();
@@ -128,6 +143,10 @@ ${schemaRules}
     let data;
     try {
       data = JSON.parse(text);
+      if (!Array.isArray(data.days) || data.days.length !== days ||
+          data.days.some(d => !d || !Array.isArray(d.plan) || typeof d.base !== "string")) {
+        throw new Error("Incomplete itinerary");
+      }
     } catch {
       return {
         statusCode: 500,
@@ -148,14 +167,14 @@ ${schemaRules}
       return {
         statusCode: 429,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ error: "OpenAI quota/rate limit reached. Check billing/limits and try again." })
+        body: JSON.stringify({ error: "The trip planner is busy. Please try again later or browse our suggested itineraries." })
       };
     }
 
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: `Server error: ${err.message}` })
+      body: JSON.stringify({ error: "We could not create a complete itinerary. Please try again or browse our suggested itineraries." })
     };
   }
 };

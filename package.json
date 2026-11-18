@@ -1,9 +1,14 @@
 {
-    "name": "srilanka-travel",
-    "private": true,
-    "type": "module",
-    "dependencies": {
-      "openai": "^5.0.0"
-    }
+  "name": "srilanka-travel",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "openai": "^5.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check:site": "node scripts/check-site.mjs",
+    "monitor": "node scripts/monitor.mjs"
   }
-  
+}

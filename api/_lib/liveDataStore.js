@@ -2,24 +2,7 @@ const MEMORY_KEY = "__community_updates_memory_store";
 
 function getMemoryStore() {
   if (!globalThis[MEMORY_KEY]) {
-    globalThis[MEMORY_KEY] = [
-      {
-        id: "seed-1",
-        category: "event",
-        city: "Kandy",
-        title: "Evening cultural dance show schedule updated",
-        details: "New 6:00 PM show slot at Kandy Lake Cultural Hall.",
-        price_info: "Approx USD 10",
-        event_start: null,
-        event_end: null,
-        source_url: "https://www.srilanka.travel",
-        submitter_email: "",
-        status: "approved",
-        created_at: new Date().toISOString(),
-        reviewed_at: new Date().toISOString(),
-        reviewed_by: "system"
-      }
-    ];
+    globalThis[MEMORY_KEY] = [];
   }
   return globalThis[MEMORY_KEY];
 }
@@ -32,7 +15,7 @@ function supabaseConfig() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
   if (!url || !key) return null;
-  return { url, key };
+  return { url: url.trim().replace(/\/+$/, ""), key: key.trim() };
 }
 
 async function supabaseFetch(path, { method = "GET", body, prefer } = {}) {
@@ -49,6 +32,7 @@ async function supabaseFetch(path, { method = "GET", body, prefer } = {}) {
 
   const res = await fetch(`${cfg.url}/rest/v1/${path}`, {
     method,
+    signal: AbortSignal.timeout(8000),
     headers,
     body: body ? JSON.stringify(body) : undefined
   });
@@ -66,7 +50,7 @@ export async function listApproved(limit = 30) {
   const cfg = supabaseConfig();
   if (cfg) {
     return supabaseFetch(
-      `community_updates?status=eq.approved&order=created_at.desc&limit=${Number(limit)}`
+      `community_updates?select=id,category,city,title,details,price_info,event_start,event_end,source_url,created_at&status=eq.approved&order=created_at.desc&limit=${Number(limit)}`
     );
   }
 
@@ -91,6 +75,7 @@ export async function listPending(limit = 100) {
 }
 
 export async function createPending(input) {
+  if (!supabaseConfig()) throw new Error("Community submissions are temporarily unavailable. Please use the contact page.");
   const payload = {
     category: input.category,
     city: input.city,

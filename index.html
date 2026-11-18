@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sri Lanka Travel | Discover the Pearl of the Indian Ocean</title>
+  <title>Sri Lanka Travelers | Plan Your Sri Lanka Trip</title>
   <meta name="description" content="Your complete guide to Sri Lanka — destinations, food, culture, visa info, and travel tips. Generate a custom itinerary by selecting cities." />
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -110,7 +110,7 @@
     .hero-subtitle{
       max-width: 760px;
       margin: 0 0 22px;
-      font-size: clamp(15px, 1.5vw, 18px);      
+      font-size: clamp(15px, 1.5vw, 18px);
       color: rgba(255,255,255,.92);
       line-height: 1.65;
       text-shadow:
@@ -293,7 +293,7 @@
     .chip-actions button:hover{ opacity:.95; }
 
     .hero-results{ margin-top: 14px; display:grid; gap: 12px; }
-    .status{ 
+    .status{
       color: #fff; font-weight: 800; font-size: 13px;
       text-shadow:
         -.1px -.1px 0 #000,
@@ -310,7 +310,7 @@
       box-shadow: 0 18px 60px rgba(0,0,0,.18);
     }
     .result-card h3{ margin: 0 0 6px; font-size: 18px; color: #000; }
-    .result-card p{ margin: 0 0 10px; color: #fff; line-height: 1.6; font-size: 14px;  
+    .result-card p{ margin: 0 0 10px; color: #fff; line-height: 1.6; font-size: 14px;
       text-shadow:
     -1px -1px 0 #000,
      1px -1px 0 #000,
@@ -479,147 +479,39 @@
       .pill-field-wide{ min-width: 0; }
     }
   </style>
+  <link rel="stylesheet" href="assets/css/priority.css">
 </head>
 
 <body class="has-mobile-cta">
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="index.html" class="logo">Travel <span>Sri Lanka</span></a>
-      <button class="menu-toggle" aria-label="Toggle menu">☰</button>
-      <nav class="nav-main">
-        <a href="index.html" class="active">Home</a>
-        <a href="destinations.html">Destinations</a>
-        <a href="booking.html">Book</a>
-        <a href="live-updates.html">Live Updates</a>
-        <a href="food.html">Food</a>
-        <a href="culture.html">Culture</a>
-        <a href="practical.html">Visa & Info</a>
-        <a href="my-trips.html">My Trips</a>
-        <a href="contact.html">Contact Us</a>
-      </nav>
-    </div>
-  </header>
+<a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header"><div class="header-inner"><a href="index.html" class="logo">Sri Lanka <span>Travelers</span></a><button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="main-navigation">☰</button><nav class="nav-main" id="main-navigation" aria-label="Main navigation"><a href="destinations.html">Destinations</a><a href="experiences.html">Experiences</a><a href="itineraries.html">Itineraries</a><a href="practical.html">Travel Essentials</a><a class="nav-plan" href="index.html#planner">Plan My Trip</a></nav></div></header>
 
-  <main>
+  <main id="main-content">
     <section class="hero-pro">
       <div class="hero-inner">
-        <div class="hero-badges">
-          <span class="pill">🌴 <b>Pearl</b> of the Indian Ocean</span>
-          <span class="pill">🏆 UNESCO • Wildlife • Beaches • Tea Country</span>
-          <span class="pill">🧭 Best for: <b>7–14 day</b> trips</span>
-        </div>
-
-        <h1 class="hero-title">Travel Sri Lanka</h1>
-        <p class="hero-subtitle">
-          Ancient kingdoms, epic wildlife safaris, scenic train journeys, misty mountains, golden beaches, and unforgettable food — discover Sri Lanka through curated guides, top destinations, and essential 
-          travel tips in one beautiful hub.
-        </p>
-
+        <p class="eyebrow">A little island. A remarkable journey.</p>
+        <h1 class="hero-title">Your Sri Lanka trip,<br>thoughtfully planned.</h1>
+        <p class="hero-subtitle">Find your way from ancient cities to tea country and the coast. Explore practical guides, choose a route, and make the journey your own.</p>
         <div class="hero-cta">
-          <a href="destinations.html" class="btn-pro btn-primary-pro">Explore Destinations →</a>
-          <a href="booking.html" class="btn-pro btn-secondary-pro">Book Hotels & Activities</a>
-          <a href="practical.html" class="btn-pro btn-secondary-pro">Visa & Travel Info</a>
+          <a href="#planner" class="btn-pro btn-primary-pro">Plan my trip <span aria-hidden="true">→</span></a>
+          <a href="itineraries.html" class="btn-pro btn-secondary-pro">Explore suggested routes</a>
         </div>
-        <div class="trust-row">
-          <span class="trust-pill">✅ AI Powered</span>
-          <span class="trust-pill">🕒 Reply within 24h</span>
-          <span class="trust-pill">🔒 No spam. No account needed.</span>
-        </div>
-
-        <!-- Trip Planner -->
-        <div class="planner">
-          <div class="planner-top">
-            <div>
-              <h2>Build your own itinerary (AI)</h2>
-              </div>
-          </div>
-
-          <form id="itineraryForm">
-            
-            <div class="pill-field pill-field-wide" id="startingLocationWrap">
-
-              <div class="pill-label">STARTING LOCATION</div>
-            
-              <input
-                type="text"
-                id="citySearch"
-                class="pill-input"
-                placeholder="Select one or more cities…"
-                autocomplete="off"
-              />
-            
-              <!-- Dropdown -->
-              <div id="cityDropdown" class="pill-dropdown">
-                <div class="pill-dropdown-search">
-                  <input id="cityFilter" type="text" placeholder="Search cities…" />
-                </div>
-                <div id="cityList" class="pill-dropdown-list"></div>
-              </div>
-            
-              <!-- Hidden inputs -->
-              <div id="citiesHiddenInputs"></div>
-            
-              <div id="cityError"
-                   style="color:#ffb3b3; font-weight:700; margin-top:8px; display:none;">
-                Please select at least one city.
-              </div>
-            
-            </div>          
-          
-            <!-- Controls -->
-            <div class="controls">
-              <div class="field">
-                <label for="days">Days</label>
-                <select id="days" name="days" required>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                    <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="7" selected>7</option>
-                  <option value="10">10</option>
-                  <option value="12">12</option>
-                  <option value="14">14</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="travelers">Travelers</label>
-                <select id="travelers" name="travelers" required>
-                  <option value="1">1</option>
-                  <option value="2" selected>2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="style">Style</label>
-                <select id="style" name="style">
-                  <option value="balanced" selected>Balanced</option>
-                  <option value="luxury">Luxury</option>
-                  <option value="budget">Budget</option>
-                  <option value="adventure">Adventure</option>
-                  <option value="family">Family</option>
-                </select>
-              </div>
-
-              <button class="go" type="submit">Generate →</button>
-            </div><br>
-          </form>
-        </div>
-
-        <div class="hero-results">
-          <div id="itineraryStatus" class="status"></div>
-          <div id="itineraryResult"></div>
-        </div>
+        <p class="hero-caption">Independent travel guidance · No account needed</p>
       </div>
+    </section>
+    <section class="planning-section" id="planner" aria-labelledby="planner-title">
+      <div class="planner">
+        <div class="planner-top"><div><p class="eyebrow">Make it yours</p><h2 id="planner-title">Start with your kind of trip</h2><p>Tell us when you’re going and what you enjoy. We’ll create an AI-assisted draft you can adjust.</p></div></div>
+        <form id="itineraryForm">
+          <div class="planning-fields"><div class="field"><label for="arrival">Arrival point</label><select id="arrival" name="arrival"><option value="Colombo airport (CMB)">Colombo airport (CMB)</option><option value="Colombo city">Colombo city</option><option value="Mattala airport (HRI)">Mattala airport (HRI)</option><option value="Jaffna airport (JAF)">Jaffna airport (JAF)</option></select></div><div class="field"><label for="month">Travel month</label><select id="month" name="month"><option value="Not decided">Not decided</option><option value="January">January</option><option value="February">February</option><option value="March">March</option><option value="April">April</option><option value="May">May</option><option value="June">June</option><option value="July">July</option><option value="August">August</option><option value="September">September</option><option value="October">October</option><option value="November">November</option><option value="December">December</option></select></div><div class="field"><label for="days">Days</label><select id="days" name="days"><option value="3">3</option><option value="5">5</option><option value="7" selected>7</option><option value="10">10</option><option value="12">12</option><option value="14">14</option></select></div><div class="field"><label for="travelers">Travelers</label><select id="travelers" name="travelers"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div><div class="field"><label for="budget">Daily budget per person</label><select id="budget" name="budget"><option value="Not decided">Not decided</option><option value="Budget: USD 40–80">Budget: USD 40–80</option><option value="Comfort: USD 80–160">Comfort: USD 80–160</option><option value="Premium: USD 160+">Premium: USD 160+</option></select></div><div class="field"><label for="pace">Travel pace</label><select id="pace" name="pace"><option value="Relaxed">Relaxed</option><option value="Balanced" selected>Balanced</option><option value="Active">Active</option></select></div></div>
+          <fieldset class="place-options"><legend>Places you want to visit</legend><p>Choose a few stops. Your arrival point is separate, and we may recommend a simpler route for a short trip.</p><div class="choice-grid"><label><input type="checkbox" name="cities" value="Sigiriya" checked> Sigiriya</label><label><input type="checkbox" name="cities" value="Kandy" checked> Kandy</label><label><input type="checkbox" name="cities" value="Ella" checked> Ella</label><label><input type="checkbox" name="cities" value="Galle"> Galle</label><label><input type="checkbox" name="cities" value="Yala"> Yala</label><label><input type="checkbox" name="cities" value="Mirissa"> Mirissa</label><label><input type="checkbox" name="cities" value="Nuwara Eliya"> Nuwara Eliya</label><label><input type="checkbox" name="cities" value="Polonnaruwa"> Polonnaruwa</label><label><input type="checkbox" name="cities" value="Trincomalee"> Trincomalee</label><label><input type="checkbox" name="cities" value="Jaffna"> Jaffna</label></div></fieldset>
+          <fieldset class="place-options"><legend>Your interests <span>(optional)</span></legend><div class="choice-grid"><label><input type="checkbox" name="interests" value="Beaches"> Beaches</label><label><input type="checkbox" name="interests" value="Wildlife"> Wildlife</label><label><input type="checkbox" name="interests" value="Culture"> Culture</label><label><input type="checkbox" name="interests" value="Food"> Food</label><label><input type="checkbox" name="interests" value="Hiking"> Hiking</label><label><input type="checkbox" name="interests" value="Scenic trains"> Scenic trains</label></div></fieldset>
+          <input type="hidden" name="style" value="balanced">
+          <p class="planning-note">Budget ranges are planning preferences in US dollars, excluding international flights. Drafts do not confirm prices, timetables, or bookings.</p>
+          <button class="go" type="submit">Create my trip</button>
+        </form>
+      </div>
+      <div class="hero-results"><div id="itineraryStatus" class="status" role="status" aria-live="polite"></div><div id="itineraryResult"></div></div>
     </section>
 
     <section class="wrap">
@@ -689,9 +581,9 @@
             </div>
             <div class="body">
               <h3>Sigiriya</h3>
-              <div class="meta-row"><span>⏱️ 1 day</span><span>📍 Cultural Triangle</span><span>⭐ Sunrise climb</span></div>
+              <div class="meta-row"><span>⏱️ 1 day</span><span>📍 Cultural Triangle</span><span>⭐ Plan an early visit</span></div>
               <p>Ancient rock fortress and frescoes — one of Sri Lanka’s most unforgettable views.</p>
-              <a class="link" href="destinations.html#sigiriya">Explore Sigiriya →</a>
+              <a class="link" href="sigiriya.html">Explore Sigiriya →</a>
             </div>
           </article>
 
@@ -704,7 +596,7 @@
               <h3>Ella</h3>
               <div class="meta-row"><span>⛰️ Hikes</span><span>🚆 Scenic trains</span><span>🌿 Tea country</span></div>
               <p>Misty hills, tea plantations, Nine Arches Bridge — perfect for nature and photos.</p>
-              <a class="link" href="destinations.html#ella">Explore Ella →</a>
+              <a class="link" href="ella.html">Explore Ella →</a>
             </div>
           </article>
 
@@ -717,7 +609,7 @@
               <h3>Galle Fort</h3>
               <div class="meta-row"><span>🌊 Coastal</span><span>🏛️ Dutch fort</span><span>🍽️ Cafés</span></div>
               <p>Colonial charm, cobblestone streets, boutique stays, and ocean-front sunsets.</p>
-              <a class="link" href="destinations.html#galle">Explore Galle →</a>
+              <a class="link" href="galle.html">Explore Galle →</a>
             </div>
           </article>
         </div>
@@ -729,20 +621,13 @@
     </section>
   </main>
 
-  <footer class="site-footer">         
-   
-      © 2025 Surendra Koththigoda. For informational purposes only. Check official sources for visa and travel requirements.<br>
-      Contact: <a href="tel:+1 8608349088" style="color:inherit;">+1 860 834 9088</a>
-   
-  </footer>
+  <footer class="site-footer"><a class="logo" href="index.html">Sri Lanka <span>Travelers</span></a><nav class="footer-links" aria-label="More information"><a href="booking.html">Hotels &amp; activities</a><a href="live-updates.html">Travel updates</a><a href="my-trips.html">My saved trips</a><a href="food.html">Food</a><a href="culture.html">Culture</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav><p class="footer-note">An independent Sri Lanka travel guide. Planning estimates are not live prices or bookings. Check official sources before travel.</p><p class="footer-note">© 2026 Surendra Koththigoda · <a href="mailto:surendrakoththigoda@gmail.com">Email us</a></p></footer>
 
-  <a href="contact.html" class="mobile-sticky-cta">Plan My Trip</a>
+  <a href="index.html#planner" class="mobile-sticky-cta">Plan My Trip</a>
   <script src="assets/js/site-enhancements.js" defer></script>
   <script>
     // Mobile menu
-    document.querySelector('.menu-toggle')?.addEventListener('click', function() {
-      document.querySelector('.nav-main')?.classList.toggle('open');
-    });
+
 
     // Header shadow on scroll
     window.addEventListener('scroll', function() {
@@ -802,7 +687,7 @@
 
       resultEl.innerHTML = `
         <div class="result-card">
-          <h3>${escapeHtml(data.title || "Your Sri Lanka itinerary")}</h3>
+          <p class="eyebrow">Your planning draft</p><h3>${escapeHtml(data.title || "Your Sri Lanka itinerary")}</h3><p class="planning-note">AI-assisted suggestion. Costs and journey times are estimates; check official sources before booking.</p>
           ${data.summary ? `<p>${escapeHtml(data.summary)}</p>` : ``}
           ${daysHtml}
           ${tipsHtml}
@@ -821,21 +706,25 @@
         cities: fd.getAll("cities").map(x => String(x).trim()).filter(Boolean),
         days: String(fd.get("days") || ""),
         travelers: String(fd.get("travelers") || ""),
-        style: String(fd.get("style") || "")
+        style: String(fd.get("style") || ""),
+        arrival: fd.get("arrival"), month: fd.get("month"), budget: fd.get("budget"), pace: fd.get("pace"), interests: fd.getAll("interests")
       };
     }
 
     function saveCurrentItinerary() {
       if (!latestItineraryData) return;
       const snapshot = getTripSnapshot();
-      const saved = JSON.parse(localStorage.getItem("saved_itineraries") || "[]");
+      try {
+      const stored = JSON.parse(localStorage.getItem("saved_itineraries") || "[]");
+      const saved = Array.isArray(stored) ? stored : [];
       saved.unshift({
         createdAt: new Date().toISOString(),
         trip: snapshot,
         itinerary: latestItineraryData
       });
       localStorage.setItem("saved_itineraries", JSON.stringify(saved.slice(0, 10)));
-      statusEl.textContent = "Saved ✅ Itinerary added to this browser.";
+      } catch { statusEl.textContent = "This browser cannot save trips. You can still send this draft for review."; return; }
+      statusEl.textContent = "Saved on this device. Open My Trips to find it again.";
       window.trackEvent?.("itinerary_saved", {
         city_count: snapshot.cities.length || 0,
         days: Number(snapshot.days || 0)
@@ -852,6 +741,8 @@
         `Days: ${snapshot.days || "N/A"}`,
         `Travelers: ${snapshot.travelers || "N/A"}`,
         `Style: ${snapshot.style || "N/A"}`,
+        `Arrival: ${snapshot.arrival}; Month: ${snapshot.month}; Budget: ${snapshot.budget}; Pace: ${snapshot.pace}`,
+        `Interests: ${snapshot.interests.join(", ") || "Flexible"}`,
         "",
         `Draft title: ${latestItineraryData.title || "Sri Lanka itinerary"}`,
         `Draft summary: ${latestItineraryData.summary || ""}`
@@ -870,15 +761,17 @@
 
     form?.addEventListener("submit", async (e) => {
       e.preventDefault();
+      if (form.dataset.loading === "true") return;
       resultEl.innerHTML = "";
-      statusEl.style.color = "#fff";
+      latestItineraryData = null;
+      statusEl.style.color = "#164a40";
       statusEl.textContent = "Generating your itinerary…";
 
       const fd = new FormData(form);
 
       const cities = fd.getAll("cities").map(x => String(x).trim()).filter(Boolean);
       if (!cities.length) {
-        statusEl.style.color = "#fff";
+        statusEl.style.color = "#164a40";
         statusEl.textContent = "❌ Please select at least one city.";
         return;
       }
@@ -887,12 +780,17 @@
         cities,
         days: fd.get("days"),
         travelers: fd.get("travelers"),
-        style: fd.get("style")
+        style: fd.get("style"),
+        arrival: fd.get("arrival"), month: fd.get("month"), budget: fd.get("budget"), pace: fd.get("pace"), interests: fd.getAll("interests")
       };
 
+      form.dataset.loading = "true";
+      const submitButton = form.querySelector("button[type=submit]");
+      submitButton.disabled = true;
+      submitButton.textContent = "Creating your trip…";
       try {
-        //const res = await fetch("/.netlify/functions/itinerary", { // For Netlify Functions
-        const res = await fetch("/api/itinerary", {  // Version for direct server endpoint
+        const res = await fetch("/api/itinerary", {
+          signal: AbortSignal.timeout(35000),
 
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -906,7 +804,7 @@
         }
 
         const data = await res.json();
-        statusEl.style.color = "#fff";
+        statusEl.style.color = "#164a40";
         statusEl.textContent = "Done ✅ Your itinerary is ready.";
         window.trackEvent?.("itinerary_generated_success", {
           city_count: cities.length,
@@ -916,7 +814,7 @@
         });
         renderItinerary(data);
       } catch (err) {
-        statusEl.style.color = "#fff";
+        statusEl.style.color = "#164a40";
         statusEl.textContent = "Error ❌ Could not generate itinerary.";
         window.trackEvent?.("itinerary_generated_error", {
           city_count: cities.length,
@@ -924,10 +822,14 @@
         });
         resultEl.innerHTML = `
           <div class="result-card">
-            <h3>Something went wrong</h3>
+            <h3>Let’s try another way</h3><p><a href="itineraries.html">Explore our suggested routes</a> or try creating your trip again.</p>
             <p>${escapeHtml(err?.message || "Unknown error")}</p>
           </div>
         `;
+      } finally {
+        form.dataset.loading = "false";
+        submitButton.disabled = false;
+        submitButton.textContent = "Create my trip";
       }
     });
 
@@ -942,7 +844,6 @@
       }
     });
   </script>
-  <script src="assets/js/city.js"></script>
 
 </body>
 </html>

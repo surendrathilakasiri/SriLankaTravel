@@ -1,0 +1,8 @@
+images/*.pdf
+images/DSCN3064.JPG
+Screenshot*.png
+.DS_Store
+api/
+netlify/
+tests/
+.github/
