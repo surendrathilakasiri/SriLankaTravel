@@ -334,9 +334,15 @@
         </div>
 
         <form id="contactForm"
+              name="contact"
+              data-netlify="true"
+              netlify-honeypot="_honey"
               method="POST"
-              action="/api/contact"
+              action="https://jazzy-syrniki-c5ef6c.netlify.app/contact.html?sent=1"
               class="contact-form">
+
+          <input type="hidden" name="form-name" value="contact">
+          <input type="hidden" name="source" id="contactSource" value="contact-page">
 
           <p style="display:none">
             <label>Don’t fill this out: <input name="_honey"></label>
@@ -345,7 +351,7 @@
           <div class="form-row">
             <div class="field">
               <label for="name">Name</label>
-              <input id="name" type="text" name="name" required placeholder="Your name">
+              <input id="name" type="text" name="name" minlength="2" maxlength="80" required placeholder="Your name">
             </div>
 
             <div class="field">
@@ -361,7 +367,7 @@
 
           <div class="field">
             <label for="message">Message</label>
-            <textarea id="message" name="message" rows="6" required placeholder="Tell us your travel dates, number of travelers, and what you like (beaches, wildlife, temples, hiking, food)…"></textarea>
+            <textarea id="message" name="message" rows="6" minlength="15" maxlength="4000" required placeholder="Tell us your travel dates, number of travelers, and what you like (beaches, wildlife, temples, hiking, food)…"></textarea>
           </div>
 
           <div class="form-actions">
@@ -429,77 +435,20 @@
       topicField.value = "Itinerary review request";
     }
 
-    contactForm?.addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const now = Date.now();
-      let lastSubmit = 0;
-      try { lastSubmit = Number(localStorage.getItem("contact_last_submit_ts") || 0); } catch {}
-      const cooldownMs = 30000;
+    document.getElementById("contactSource").value = source || "contact-page";
+    if (params.get("sent") === "1") {
+      formStatus.style.color = "#0b6e4f";
+      formStatus.textContent = "Thank you! Your message has been received.";
+      formStatus.scrollIntoView({ block: "center" });
+    }
 
-      if (now - lastSubmit < cooldownMs) {
-        formStatus.style.color = "#b00020";
-        formStatus.textContent = "Please wait a few seconds before sending another message.";
-        return;
-      }
-
+    // A normal form POST also works without JavaScript and across hosting domains.
+    // Netlify stores the submission before redirecting back to the contact page.
+    contactForm?.addEventListener("submit", function (e) {
       if ((messageField.value || "").trim().length < 15) {
+        e.preventDefault();
         formStatus.style.color = "#b00020";
         formStatus.textContent = "Please add a bit more detail (at least 15 characters).";
-        return;
-      }
-
-      const submitBtn = contactForm.querySelector(".btn-submit");
-      const originalText = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Sending...";
-      formStatus.textContent = "";
-
-      try {
-        const formData = new FormData(contactForm);
-        const payload = Object.fromEntries(formData.entries());
-        payload.source = source || "contact-page";
-
-        const endpoints = ["/api/contact", "/.netlify/functions/contact"];
-        let response = null;
-        let responseData = {};
-
-        for (const endpoint of endpoints) {
-          response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          responseData = await response.json().catch(() => ({}));
-          // Try the alternate host route only when this route does not exist.
-          if (response.status === 404) continue;
-          if (!response.ok || responseData.ok !== true) {
-            throw new Error(responseData.error || "Could not submit right now. Please try again.");
-          }
-          break;
-        }
-
-        if (!response || !response.ok || responseData.ok !== true) {
-          throw new Error(responseData.error || "submit-failed");
-        }
-
-        try { localStorage.setItem("contact_last_submit_ts", String(now)); } catch {}
-        formStatus.style.color = "#0b6e4f";
-        formStatus.textContent = "Form submitted successfully.";
-        window.trackEvent?.("contact_submit_success", {
-          topic: topicField.value || "unspecified",
-          source: source || "contact-page"
-        });
-        contactForm.reset();
-      } catch (err) {
-        formStatus.style.color = "#b00020";
-        formStatus.textContent = err?.message || "Could not submit right now. Please try again.";
-        window.trackEvent?.("contact_submit_error", {
-          topic: topicField.value || "unspecified",
-          source: source || "contact-page"
-        });
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
       }
     });
   </script>
