@@ -48,6 +48,18 @@ function jsonResponse(status, payload) {
   });
 }
 
+// Log only provider/status codes, never credentials or contact contents.
+async function attemptDelivery(provider, send) {
+  try {
+    const result = await send();
+    if (!result.ok) console.error("Contact delivery failed", { provider, status: result.status, skipped: result.skipped });
+    return result;
+  } catch {
+    console.error("Contact delivery failed", { provider, reason: "network_error" });
+    return { ok: false };
+  }
+}
+
 async function forwardToCrm(payload) {
   const crmUrl = process.env.CRM_WEBHOOK_URL;
   if (!crmUrl) return { ok: true, skipped: true };
@@ -94,9 +106,11 @@ async function sendViaFormSubmit({ to, subject, name, email, topic, message, sou
 
   const res = await fetch(endpoint, {
     method: "POST",
+    headers: { Accept: "application/json" },
     body: formData
   });
-  return { ok: res.ok, status: res.status };
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok && (data.success === true || data.success === "true"), status: res.status };
 }
 
 export async function POST(request) {
@@ -148,18 +162,18 @@ export async function POST(request) {
       message
     ].join("\n");
 
-    const crmResult = await forwardToCrm({ name, email, topic, message, source, ip });
+    const crmResult = await attemptDelivery("crm", () => forwardToCrm({ name, email, topic, message, source, ip }));
 
-    let sendResult = await sendViaResend({
+    let sendResult = await attemptDelivery("resend", () => sendViaResend({
       to: toEmail,
       from: fromEmail,
       subject,
       text,
       replyTo: email
-    });
+    }));
 
     if (!sendResult.ok) {
-      sendResult = await sendViaFormSubmit({
+      sendResult = await attemptDelivery("formsubmit", () => sendViaFormSubmit({
         to: toEmail,
         subject,
         name,
@@ -167,7 +181,7 @@ export async function POST(request) {
         topic,
         message,
         source
-      });
+      }));
     }
 
     if (!sendResult.ok) {
@@ -177,13 +191,13 @@ export async function POST(request) {
     }
 
     if (process.env.CONTACT_AUTO_REPLY === "true") {
-      await sendViaResend({
+      await attemptDelivery("auto-reply", () => sendViaResend({
         to: email,
         from: fromEmail,
         subject: "We received your Sri Lanka Travel request",
         text:
           "Thank you for contacting Sri Lanka Travel. We received your request and will reply within 24 hours."
-      });
+      }));
     }
 
     return jsonResponse(200, {

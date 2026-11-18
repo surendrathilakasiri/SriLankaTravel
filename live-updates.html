@@ -134,6 +134,7 @@
       activeTab: "auto",
       autoItems: [],
       manualItems: [],
+      errors: { auto: false, manual: false },
       counts: { auto: 0, manual: 0 }
     };
 
@@ -161,6 +162,13 @@
       meta.textContent = liveState.activeTab === "auto"
         ? `Trusted auto: ${liveState.autoItems.length} • Auto-refresh: 60s`
         : `Community manual: ${liveState.manualItems.length} • Auto-refresh: 60s`;
+      if (liveState.errors[liveState.activeTab]) {
+        meta.textContent = `${liveState.activeTab === "auto" ? "Auto" : "Manual"} feed temporarily unavailable. ${items.length ? "Showing previously loaded updates. " : ""}Retrying every 60s.`;
+        if (!items.length) {
+          root.innerHTML = `<div class="live-card"><p class="live-text">This feed could not be loaded. Please try the other tab or check back shortly.</p></div>`;
+          return;
+        }
+      }
       if (!items.length) {
         root.innerHTML = `<div class="live-card"><p class="live-text">No ${liveState.activeTab === "auto" ? "auto" : "manual"} updates available right now.</p></div>`;
         return;
@@ -183,37 +191,34 @@
       });
     }
 
-    async function loadUpdates() {
-      const root = document.getElementById("liveGrid");
-      const meta = document.getElementById("sourceMeta");
-      setupTabsOnce();
+    async function refreshFeed(tab, url, stateKey) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
       try {
-        const [trustedRes, manualRes] = await Promise.all([
-          fetch("/api/trusted-feed"),
-          fetch("/api/live-data")
-        ]);
-        const trustedData = await trustedRes.json().catch(() => ({}));
-        const manualData = await manualRes.json().catch(() => ({}));
-        if (!trustedRes.ok) throw new Error(trustedData.error || "Failed to load trusted feed");
-        if (!manualRes.ok) throw new Error(manualData.error || "Failed to load manual feed");
-
-        const trustedItems = Array.isArray(trustedData.items) ? trustedData.items : [];
-        const manualItems = Array.isArray(manualData.items) ? manualData.items : [];
-
-        liveState.autoItems = [...trustedItems]
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error("Feed unavailable");
+        const data = await response.json();
+        if (!Array.isArray(data.items)) throw new Error("Invalid feed response");
+        liveState[stateKey] = [...data.items]
           .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
           .slice(0, 80);
-        liveState.manualItems = [...manualItems]
-          .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
-          .slice(0, 80);
-        liveState.counts = { auto: liveState.autoItems.length, manual: liveState.manualItems.length };
-
+        liveState.errors[tab] = false;
+      } catch {
+        liveState.errors[tab] = true;
+      } finally {
+        clearTimeout(timeout);
+        liveState.counts[tab] = liveState[stateKey].length;
         setTab(liveState.activeTab);
         renderByTab();
-      } catch (err) {
-        meta.textContent = "Could not load live updates right now.";
-        root.innerHTML = `<div class="live-card"><p class="live-text">${esc(err.message || "Unknown error")}</p></div>`;
       }
+    }
+
+    async function loadUpdates() {
+      setupTabsOnce();
+      await Promise.all([
+        refreshFeed("auto", "/api/trusted-feed", "autoItems"),
+        refreshFeed("manual", "/api/live-data", "manualItems")
+      ]);
     }
 
     window.trackEvent?.("live_updates_page_view", { location: window.location.pathname });

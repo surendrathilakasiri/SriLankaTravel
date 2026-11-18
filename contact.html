@@ -432,7 +432,8 @@
     contactForm?.addEventListener("submit", async function (e) {
       e.preventDefault();
       const now = Date.now();
-      const lastSubmit = Number(localStorage.getItem("contact_last_submit_ts") || 0);
+      let lastSubmit = 0;
+      try { lastSubmit = Number(localStorage.getItem("contact_last_submit_ts") || 0); } catch {}
       const cooldownMs = 30000;
 
       if (now - lastSubmit < cooldownMs) {
@@ -461,30 +462,27 @@
         const endpoints = ["/api/contact", "/.netlify/functions/contact"];
         let response = null;
         let responseData = {};
-        let lastError = null;
 
         for (const endpoint of endpoints) {
-          try {
-            response = await fetch(endpoint, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-            });
-            responseData = await response.json().catch(() => ({}));
-            if (response.ok) break;
-            if (response.status !== 404) {
-              throw new Error(responseData.error || "submit-failed");
-            }
-          } catch (innerErr) {
-            lastError = innerErr;
+          response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          responseData = await response.json().catch(() => ({}));
+          // Try the alternate host route only when this route does not exist.
+          if (response.status === 404) continue;
+          if (!response.ok || responseData.ok !== true) {
+            throw new Error(responseData.error || "Could not submit right now. Please try again.");
           }
+          break;
         }
 
-        if (!response || !response.ok) {
-          throw lastError || new Error(responseData.error || "submit-failed");
+        if (!response || !response.ok || responseData.ok !== true) {
+          throw new Error(responseData.error || "submit-failed");
         }
 
-        localStorage.setItem("contact_last_submit_ts", String(now));
+        try { localStorage.setItem("contact_last_submit_ts", String(now)); } catch {}
         formStatus.style.color = "#0b6e4f";
         formStatus.textContent = "Form submitted successfully.";
         window.trackEvent?.("contact_submit_success", {
