@@ -6,11 +6,11 @@
 
 Run `npm test`, `npm run build`, and `npm run check:site` before deployment. GitHub Actions runs these on main and performs read-only production smoke checks every six hours. Review failed workflow runs; notification delivery depends on the owner's GitHub notification preferences. Scheduled checks do not submit contact messages or call the AI model.
 
-## Hosting transition
+## Hosting
 
 Netlify is the backend for `/api/*`. `netlify.toml` maps routes to bundled functions. Vercel rewrites those requests to the Netlify site while it continues serving the custom domain. Its deployment excludes local API functions to prevent conflicting runtimes.
 
-On 17 November 2026 the Netlify dashboard reported incomplete DNS propagation and an expired certificate for the custom domain. Do not remove the working Vercel domain until registrar DNS is verified and Netlify has issued a valid certificate. Complete the registrar migration using the exact records/nameservers shown in Netlify Domain management; verify HTTPS on apex and www before removing the transitional Vercel deployment.
+Vercel remains the public host for the custom domain, as confirmed by the owner on 17 November 2026. Keep its domain and DNS configuration. Netlify APIs and Forms use the HTTPS netlify.app hostname; no DNS migration is required for this arrangement. The unused custom-domain configuration in Netlify reported incomplete propagation and an expired certificate on that date; it is not the endpoint used by the Vercel API rewrites.
 
 ## Data and secrets
 
