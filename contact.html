@@ -338,7 +338,7 @@
               data-netlify="true"
               netlify-honeypot="_honey"
               method="POST"
-              action="https://jazzy-syrniki-c5ef6c.netlify.app/contact.html?sent=1"
+              action="/contact.html?sent=1"
               class="contact-form">
 
           <input type="hidden" name="form-name" value="contact">
@@ -435,6 +435,7 @@
       topicField.value = "Itinerary review request";
     }
 
+    contactForm.action = "https://jazzy-syrniki-c5ef6c.netlify.app/contact.html?sent=1";
     document.getElementById("contactSource").value = source || "contact-page";
     if (params.get("sent") === "1") {
       formStatus.style.color = "#0b6e4f";
