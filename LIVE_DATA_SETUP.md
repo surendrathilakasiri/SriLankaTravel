@@ -1,68 +1,13 @@
-# Live Data Setup (Phase B.1)
+# Travel updates on Vercel
 
-This project now supports a moderated live updates workflow:
+All update endpoints run as Vercel Functions:
+- `GET /api/live-data`: approved community records, public fields only
+- `GET /api/trusted-feed`: recent news, resilient to an individual source outage
+- `POST /api/update-submissions`: save a pending update in private Vercel Blob storage
+- `GET/PATCH/DELETE /api/admin/updates`: authenticated moderation using `UPDATE_ADMIN_TOKEN`
 
-1. Public submit form: `submit-update.html`
-2. Admin moderation: `admin-updates.html`
-3. Approved feed: `live-updates.html`
-4. Trusted auto-feed (no approval): `/api/trusted-feed`
+Connect the private Vercel Blob store to the project and redeploy. `BLOB_STORE_ID` and Vercel OIDC authenticate storage access. No Supabase or Netlify runtime is required. Unconfigured storage rejects new submissions rather than pretending to save them.
 
-## Vercel Environment Variables
+Community updates start as pending. Use `/admin-updates.html` to approve or reject them. Contributor emails are excluded from public responses. Removal archives the record with `status: deleted`.
 
-Set these in Vercel Project Settings -> Environment Variables:
-
-- `UPDATE_ADMIN_TOKEN` (required for moderation API)
-- `SUPABASE_URL` (optional but recommended)
-- `SUPABASE_SERVICE_ROLE_KEY` (optional but recommended)
-
-If Supabase variables are not set, the API uses an in-memory fallback (non-persistent).
-
-Optional trusted-feed source override:
-
-- `LIVE_FEED_SOURCES` as JSON array:
-```json
-[
-  {"name":"Google News (Sri Lanka Travel)","type":"rss","url":"https://news.google.com/rss/search?q=Sri+Lanka+travel"}
-]
-```
-
-## Supabase Table SQL
-
-Run this SQL in Supabase SQL Editor:
-
-```sql
-create table if not exists public.community_updates (
-  id uuid primary key default gen_random_uuid(),
-  category text not null check (category in ('taxi-fee','hotel-price','place','event')),
-  city text not null,
-  title text not null,
-  details text not null,
-  price_info text,
-  event_start date,
-  event_end date,
-  source_url text,
-  submitter_email text,
-  status text not null default 'pending' check (status in ('pending','approved','rejected')),
-  created_at timestamptz not null default now(),
-  reviewed_at timestamptz,
-  reviewed_by text
-);
-
-create index if not exists idx_community_updates_status_created
-  on public.community_updates(status, created_at desc);
-```
-
-## API Routes
-
-- `POST /api/update-submissions` -> create pending update
-- `GET /api/live-data` -> list approved updates
-- `GET /api/trusted-feed` -> list trusted-source automatic feed (no moderation)
-- `GET /api/admin/updates` -> list pending updates (admin token required)
-- `PATCH /api/admin/updates` -> approve/reject update (admin token required)
-
-## Moderation Flow
-
-1. Open `/submit-update.html` and submit an update.
-2. Open `/admin-updates.html`, enter `UPDATE_ADMIN_TOKEN`, load queue.
-3. Approve/reject each item.
-4. Approved items appear on `/live-updates.html`.
+For contact messages, use `/admin-contacts.html`. See `OPERATIONS.md` for notifications and deployment checks. Preserve any legacy Supabase or Netlify records until they have been exported and verified.

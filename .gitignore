@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.DS_Store
+images/*.pdf
+images/DSCN3064.JPG
+Screenshot*.png
+.netlify/
+.vercel/

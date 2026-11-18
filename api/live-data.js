@@ -1,4 +1,4 @@
-import { listApproved, usingSupabase } from "./_lib/liveDataStore.js";
+import { listApproved } from "../lib/live-data-store.js";
 
 async function getLiveData() {
   const items = await listApproved(50);
@@ -6,7 +6,7 @@ async function getLiveData() {
     status: 200,
     payload: {
       items,
-      source: usingSupabase() ? "supabase" : "memory"
+      source: "vercel-blob"
     }
   };
 }
@@ -14,7 +14,7 @@ async function getLiveData() {
 function respond(status, payload) {
   return new Response(JSON.stringify(payload), {
     status,
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=0, s-maxage=30" }
   });
 }
 
@@ -23,18 +23,6 @@ export async function GET() {
     const out = await getLiveData();
     return respond(out.status, out.payload);
   } catch (err) {
-    return respond(500, { error: `Server error: ${err?.message || "Unknown"}` });
-  }
-}
-
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
-  try {
-    const out = await getLiveData();
-    return res.status(out.status).json(out.payload);
-  } catch (err) {
-    return res.status(500).json({ error: `Server error: ${err?.message || "Unknown"}` });
+    return respond(500, { error: "Travel updates are temporarily unavailable. Please try again shortly." });
   }
 }

@@ -107,7 +107,7 @@ function parseRss(xml, sourceName) {
       details,
       price_info: "N/A",
       source_url: link,
-      created_at: new Date(pubDate).toISOString(),
+      created_at: Number.isFinite(Date.parse(pubDate)) ? new Date(pubDate).toISOString() : new Date().toISOString(),
       feed_source: sourceName,
       auto_feed: true
     });
@@ -135,7 +135,7 @@ function parseRss(xml, sourceName) {
       details,
       price_info: "N/A",
       source_url: link,
-      created_at: new Date(updated).toISOString(),
+      created_at: Number.isFinite(Date.parse(updated)) ? new Date(updated).toISOString() : new Date().toISOString(),
       feed_source: sourceName,
       auto_feed: true
     });
@@ -147,6 +147,7 @@ function parseRss(xml, sourceName) {
 async function fetchSource(source) {
   const res = await fetch(source.url, {
     method: "GET",
+    signal: AbortSignal.timeout(8000),
     headers: {
       "User-Agent": "SriLankaTravelBot/1.0"
     }
@@ -165,20 +166,24 @@ async function fetchSource(source) {
 async function getTrustedFeed() {
   const sources = getSources();
   const all = [];
+  let successfulSources = 0;
 
   await Promise.all(
     sources.map(async (source) => {
       try {
         const rows = await fetchSource(source);
         all.push(...rows);
+        successfulSources++;
       } catch {
         // keep resilient; one source failing should not break feed
       }
     })
   );
 
+  if (!successfulSources) throw new Error("News sources are temporarily unavailable.");
   const dedup = new Map();
   for (const row of all) {
+    if (Date.parse(row.created_at) < Date.now() - 30 * 86400000) continue;
     const key = (row.source_url || row.title).toLowerCase();
     if (!dedup.has(key)) dedup.set(key, row);
   }
@@ -196,21 +201,9 @@ export async function GET() {
       headers: { "Content-Type": "application/json" }
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: `Server error: ${err?.message || "Unknown"}` }), {
+    return new Response(JSON.stringify({ error: "Travel updates are temporarily unavailable. Please try again shortly." }), {
       status: 500,
       headers: { "Content-Type": "application/json" }
     });
-  }
-}
-
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
-  try {
-    const items = await getTrustedFeed();
-    return res.status(200).json({ items, source: "trusted-auto-feed" });
-  } catch (err) {
-    return res.status(500).json({ error: `Server error: ${err?.message || "Unknown"}` });
   }
 }

@@ -1,0 +1,7 @@
+images/*.pdf
+images/DSCN3064.JPG
+Screenshot*.png
+.DS_Store
+tests/
+.github/
+*.md

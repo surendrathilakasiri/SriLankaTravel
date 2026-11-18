@@ -1,0 +1,4 @@
+# Retired host: retain the last deployment and historical form submissions.
+# Vercel now builds and runs the site. Skip future Netlify Git-triggered builds.
+[build]
+  ignore = "exit 0"
