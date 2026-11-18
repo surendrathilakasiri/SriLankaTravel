@@ -1,7 +1,7 @@
 import { readFile, mkdir, copyFile, rm, realpath } from 'node:fs/promises';
 import path from 'node:path';
 
-export const pages = ['index.html','destinations.html','experiences.html','itineraries.html','booking.html','contact.html','culture.html','food.html','practical.html','privacy.html','terms.html','my-trips.html','live-updates.html','submit-update.html','admin-updates.html','sigiriya.html','ella.html','galle.html','kandy.html','yala.html'];
+export const pages = ['index.html','destinations.html','experiences.html','itineraries.html','booking.html','contact.html','culture.html','food.html','practical.html','privacy.html','terms.html','my-trips.html','live-updates.html','submit-update.html','admin-updates.html','admin-contacts.html','sigiriya.html','ella.html','galle.html','kandy.html','yala.html'];
 const root = process.cwd();
 const output = path.join(root, 'dist');
 // dist is generated only; no source files or personal documents are removed.

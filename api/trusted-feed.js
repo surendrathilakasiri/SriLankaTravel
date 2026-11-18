@@ -201,21 +201,9 @@ export async function GET() {
       headers: { "Content-Type": "application/json" }
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: `Server error: ${err?.message || "Unknown"}` }), {
+    return new Response(JSON.stringify({ error: "Travel updates are temporarily unavailable. Please try again shortly." }), {
       status: 500,
       headers: { "Content-Type": "application/json" }
     });
-  }
-}
-
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
-  try {
-    const items = await getTrustedFeed();
-    return res.status(200).json({ items, source: "trusted-auto-feed" });
-  } catch (err) {
-    return res.status(500).json({ error: `Server error: ${err?.message || "Unknown"}` });
   }
 }

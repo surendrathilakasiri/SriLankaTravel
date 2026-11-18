@@ -2,7 +2,7 @@
 const origin = process.env.SITE_URL || 'https://www.srilankatravelers.com';
 const checks = [
  ['/index.html', text=>text.includes('name="arrival"') && text.includes('name="budget"')],
- ['/contact.html', text=>text.includes('name="form-name"') && text.includes('value="contact"')],
+ ['/contact.html', text=>text.includes('action="/api/contact"') && !text.includes('netlify')],
  ['/sigiriya.html', text=>text.includes('Sources and checks')],
  ['/api/live-data', text=>Array.isArray(JSON.parse(text).items)],
  ['/api/trusted-feed', text=>Array.isArray(JSON.parse(text).items)]
@@ -22,4 +22,16 @@ try {
  if(response.status!==400) throw new Error(`Expected validation error, got ${response.status}`);
  console.log('PASS itinerary route and configuration');
 } catch(error) { failed=true; console.error(`FAIL itinerary: ${error.message}`); }
+for (const route of ['/api/admin/contacts','/api/admin/updates']) {
+ try {
+  const response = await fetch(origin + route, { signal: AbortSignal.timeout(10000) });
+  if (response.status !== 401 || !response.headers.get('cache-control')?.includes('no-store')) throw new Error('Admin authorization or caching mismatch');
+  console.log(`PASS ${route} requires authorization`);
+ } catch (error) { failed=true; console.error(`FAIL ${route}: ${error.message}`); }
+}
+try {
+ const response=await fetch(origin+'/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(10000)});
+ if(response.status!==400) throw new Error(`Expected validation error, got ${response.status}`);
+ console.log('PASS contact endpoint validation');
+} catch(error) { failed=true; console.error(`FAIL contact: ${error.message}`); }
 if(failed) process.exitCode=1;

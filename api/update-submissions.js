@@ -1,4 +1,4 @@
-import { createPending } from "./_lib/liveDataStore.js";
+import { createPending } from "../lib/live-data-store.js";
 
 function clean(v) {
   return String(v || "").trim();
@@ -78,19 +78,6 @@ export async function POST(request) {
     const out = await processSubmission(body);
     return respond(out.status, out.payload);
   } catch (err) {
-    return respond(500, { error: `Server error: ${err?.message || "Unknown"}` });
-  }
-}
-
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
-  try {
-    const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
-    const out = await processSubmission(body);
-    return res.status(out.status).json(out.payload);
-  } catch (err) {
-    return res.status(500).json({ error: `Server error: ${err?.message || "Unknown"}` });
+    return respond(500, { error: "Travel updates are temporarily unavailable. Please try again shortly." });
   }
 }

@@ -1,41 +1,4 @@
+# Retired host: retain the last deployment and historical form submissions.
+# Vercel now builds and runs the site. Skip future Netlify Git-triggered builds.
 [build]
-  command = "npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
-
-[build.environment]
-  NODE_VERSION = "22"
-
-[functions]
-  node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/api/itinerary"
-  to = "/.netlify/functions/itinerary"
-  status = 200
-[[redirects]]
-  from = "/api/contact"
-  to = "/.netlify/functions/contact"
-  status = 200
-[[redirects]]
-  from = "/api/live-data"
-  to = "/.netlify/functions/live-data"
-  status = 200
-[[redirects]]
-  from = "/api/trusted-feed"
-  to = "/.netlify/functions/trusted-feed"
-  status = 200
-[[redirects]]
-  from = "/api/update-submissions"
-  to = "/.netlify/functions/update-submissions"
-  status = 200
-[[redirects]]
-  from = "/api/admin/updates"
-  to = "/.netlify/functions/admin-updates"
-  status = 200
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    X-Frame-Options = "SAMEORIGIN"
+  ignore = "exit 0"

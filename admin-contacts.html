@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Inbox | Sri Lanka Travel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Private contact inbox.">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .admin-wrap { max-width: 1120px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    .admin-card { background:#fff; border:1px solid #dbe7f1; border-radius:14px; padding:14px; box-shadow:0 10px 26px rgba(10,61,98,.08); }
+    .queue { display:grid; gap:10px; margin-top:12px; }
+    .item { border:1px solid #dbe7f1; border-radius:12px; padding:12px; }
+    .item h3 { margin:0 0 6px; color:#0b1b2a; font-size:1rem; }
+    .meta { margin:0 0 7px; color:#596a7a; font-size:.85rem; }
+    .txt { margin:0; color:#2a3f54; font-size:.93rem; }
+    .actions { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+    .btn { border:none; border-radius:10px; padding:9px 11px; font-size:.82rem; font-weight:900; cursor:pointer; }
+    .approve { background:#0b6e4f; color:#fff; }
+    .reject { background:#b00020; color:#fff; }
+    .delete { background:#2f3b48; color:#fff; }
+    .top { display:grid; grid-template-columns:1fr auto; gap:8px; }
+    .top input { border:1px solid #cfdeec; border-radius:10px; padding:10px; }
+  </style>
+  <link rel="stylesheet" href="assets/css/priority.css">
+</head>
+<body class="has-mobile-cta">
+<a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header"><div class="header-inner"><a href="index.html" class="logo">Sri Lanka <span>Travelers</span></a><button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="main-navigation">☰</button><nav class="nav-main" id="main-navigation" aria-label="Main navigation"><a href="destinations.html">Destinations</a><a href="experiences.html">Experiences</a><a href="itineraries.html">Itineraries</a><a href="practical.html">Travel Essentials</a><a class="nav-plan" href="index.html#planner">Plan My Trip</a></nav></div></header>
+
+  <div class="page-hero">
+    <h1>Contact Inbox</h1>
+    <p>Read messages saved securely on Vercel.</p>
+  </div>
+
+  <main id="main-content" class="admin-wrap">
+    <p><a href="admin-updates.html">Open community moderation</a></p>
+    <div class="admin-card">
+      <div class="top">
+        <input id="adminToken" type="password" autocomplete="off" aria-label="Admin token" placeholder="Enter UPDATE_ADMIN_TOKEN">
+        <button class="btn approve" id="loadBtn">Load Messages</button>
+      </div>
+      <p id="status" class="meta">Your admin token is required. It is kept only in this page’s memory.</p>
+      <div id="queue" class="queue"></div>
+      <button class="btn approve" id="moreBtn" hidden>Load more</button>
+    </div>
+  </main>
+
+  <footer class="site-footer"><a class="logo" href="index.html">Sri Lanka <span>Travelers</span></a><nav class="footer-links" aria-label="More information"><a href="booking.html">Hotels &amp; activities</a><a href="live-updates.html">Travel updates</a><a href="my-trips.html">My saved trips</a><a href="food.html">Food</a><a href="culture.html">Culture</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav><p class="footer-note">An independent Sri Lanka travel guide. Planning estimates are not live prices or bookings. Check official sources before travel.</p><p class="footer-note">© 2026 Surendra Koththigoda · <a href="mailto:surendrakoththigoda@gmail.com">Email us</a></p></footer>
+  <script>
+    const queue = document.getElementById('queue');
+    const statusEl = document.getElementById('status');
+    const tokenEl = document.getElementById('adminToken');
+    const more = document.getElementById('moreBtn');
+    let cursor = null;
+    function addText(parent, tag, value) {
+      const el = document.createElement(tag);
+      el.textContent = value || '';
+      parent.appendChild(el);
+      return el;
+    }
+    async function load(append = false) {
+      const token = tokenEl.value.trim();
+      if (!token) { statusEl.textContent = 'Please enter your admin token.'; return; }
+      if (!append) { queue.replaceChildren(); cursor = null; }
+      more.hidden = true;
+      statusEl.textContent = 'Loading messages…';
+      try {
+        const response = await fetch('/api/admin/contacts' + (cursor ? '?cursor=' + encodeURIComponent(cursor) : ''), {
+          headers: { 'x-admin-token': token }, cache: 'no-store'
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Unable to load messages.');
+        for (const item of data.items) {
+          const article = document.createElement('article');
+          article.className = 'item';
+          addText(article, 'h3', item.topic);
+          addText(article, 'p', `${item.name} · ${item.email}`);
+          addText(article, 'p', new Date(item.created_at).toLocaleString()).className = 'meta';
+          addText(article, 'p', item.message).style.whiteSpace = 'pre-wrap';
+          addText(article, 'p', 'Reference: ' + item.id).className = 'meta';
+          queue.appendChild(article);
+        }
+        cursor = data.cursor;
+        more.hidden = !cursor;
+        statusEl.textContent = queue.children.length ? `${queue.children.length} messages loaded.` : 'No messages yet.';
+      } catch (error) { statusEl.textContent = error.message; }
+    }
+    document.getElementById('loadBtn').addEventListener('click', () => load());
+    more.addEventListener('click', () => load(true));
+  </script>
+  <script src="assets/js/site-enhancements.js" defer></script>
+</body>
+</html>

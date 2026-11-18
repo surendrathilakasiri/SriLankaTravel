@@ -1,7 +1,15 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "https://jazzy-syrniki-c5ef6c.netlify.app/api/:path*" }
+  "functions": { "api/**/*.js": { "maxDuration": 60 } },
+  "headers": [
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+      { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+    ] },
+    { "source": "/api/admin/(.*)", "headers": [
+      { "key": "Cache-Control", "value": "private, no-store" }
+    ] }
   ]
 }

@@ -4,13 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Us | Sri Lanka Travel Guide</title>
-  <script>
-    // Return to the public domain only after Netlify redirects a completed submission.
-    if (window.location.hostname === "jazzy-syrniki-c5ef6c.netlify.app" &&
-        new URLSearchParams(window.location.search).get("sent") === "1") {
-      window.location.replace("https://www.srilankatravelers.com/contact.html?sent=1");
-    }
-  </script>
+
   <meta name="description" content="Get in touch about Sri Lanka travel – questions, feedback, or trip planning help.">
   <link rel="stylesheet" href="assets/css/styles.css">
 
@@ -328,13 +322,11 @@
 
         <form id="contactForm"
               name="contact"
-              data-netlify="true"
-              netlify-honeypot="_honey"
               method="POST"
-              action="/contact.html?sent=1"
+              action="/api/contact"
               class="contact-form">
 
-          <input type="hidden" name="form-name" value="contact">
+          <input type="hidden" name="submission_id" id="submissionId">
           <input type="hidden" name="source" id="contactSource" value="contact-page">
 
           <p style="display:none">
@@ -349,13 +341,13 @@
 
             <div class="field">
               <label for="email">Email</label>
-              <input id="email" type="email" name="email" required placeholder="your@email.com">
+              <input id="email" type="email" name="email" maxlength="254" required placeholder="your@email.com">
             </div>
           </div>
 
           <div class="field">
             <label for="topic">Topic</label>
-            <input id="topic" type="text" name="topic" placeholder="Visa, itinerary, hotels, budget, etc.">
+            <input id="topic" type="text" name="topic" maxlength="120" placeholder="Visa, itinerary, hotels, budget, etc.">
           </div>
 
           <div class="field">
@@ -367,7 +359,7 @@
             <button type="submit" class="btn-submit">Send Message</button>
             <p id="formStatus" class="form-note" aria-live="polite"></p>
             <p class="form-note">
-              By submitting, you agree we can reply to your email. We never share your info. See
+              By submitting, you agree we can reply to your email. We use service providers to securely process your message. See
               <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms</a>.
             </p>
           </div>
@@ -421,7 +413,11 @@
       topicField.value = "Itinerary review request";
     }
 
-    contactForm.action = "https://jazzy-syrniki-c5ef6c.netlify.app/contact.html?sent=1";
+    const submissionId = document.getElementById("submissionId");
+    function newSubmissionId() {
+      submissionId.value = crypto.randomUUID ? `${9999999999999 - Date.now()}-${crypto.randomUUID()}` : "";
+    }
+    newSubmissionId();
     document.getElementById("contactSource").value = source || "contact-page";
     if (params.get("sent") === "1") {
       formStatus.style.color = "#0b6e4f";
@@ -429,13 +425,41 @@
       formStatus.scrollIntoView({ block: "center" });
     }
 
-    // A normal form POST also works without JavaScript and across hosting domains.
-    // Netlify stores the submission before redirecting back to the contact page.
-    contactForm?.addEventListener("submit", function (e) {
-      if ((messageField.value || "").trim().length < 15) {
-        e.preventDefault();
+    let sending = false;
+    contactForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (sending || !contactForm.reportValidity()) return;
+      const button = contactForm.querySelector('button[type="submit"]');
+      sending = true;
+      button.disabled = true;
+      button.textContent = "Sending…";
+      formStatus.style.color = "#334155";
+      formStatus.textContent = "Saving your message…";
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
+      try {
+        const response = await fetch("/api/contact", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.fromEntries(new FormData(contactForm))),
+          signal: controller.signal
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || "Please try again shortly.");
+        formStatus.style.color = "#0b6e4f";
+        formStatus.textContent = "Thank you! Your message has been received.";
+        contactForm.reset();
+        newSubmissionId();
+        history.replaceState(null, "", "/contact.html?sent=1");
+      } catch (error) {
         formStatus.style.color = "#b00020";
-        formStatus.textContent = "Please add a bit more detail (at least 15 characters).";
+        formStatus.textContent = error.name === "AbortError"
+          ? "We could not confirm receipt yet. Please retry; your reference prevents duplicate messages."
+          : (error.message || "Please retry, or email surendrakoththigoda@gmail.com.");
+      } finally {
+        clearTimeout(timeout);
+        sending = false;
+        button.disabled = false;
+        button.textContent = "Send Message";
       }
     });
   </script>

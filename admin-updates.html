@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Updates Review | Sri Lanka Travel</title>
+  <meta name="robots" content="noindex, nofollow">
   <meta name="description" content="Admin moderation queue for travel updates.">
   <link rel="stylesheet" href="assets/css/styles.css">
   <style>
@@ -34,9 +35,10 @@
   </div>
 
   <main id="main-content" class="admin-wrap">
+    <p><a href="admin-contacts.html">Open contact inbox</a></p>
     <div class="admin-card">
       <div class="top">
-        <input id="adminToken" placeholder="Enter UPDATE_ADMIN_TOKEN">
+        <input id="adminToken" type="password" autocomplete="off" aria-label="Admin token" placeholder="Enter UPDATE_ADMIN_TOKEN">
         <button class="btn approve" id="loadBtn">Load Pending</button>
       </div>
       <p id="status" class="meta">Token required to access moderation queue.</p>
@@ -128,7 +130,7 @@
       const card = e.target.closest("[data-id]");
       if (!card) return;
       if (act === "delete") {
-        const ok = window.confirm("Delete this update permanently?");
+        const ok = window.confirm("Remove this update from the feed? An archived copy will remain.");
         if (!ok) return;
         moderate(card.getAttribute("data-id"), "delete");
         return;

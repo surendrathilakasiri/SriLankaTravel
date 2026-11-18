@@ -1,26 +1,34 @@
 # Website operations
 
-## Public files
-
-`npm run build` creates `dist/` from the explicit page list in `scripts/build.mjs` and only referenced CSS, JavaScript and image assets. Netlify and Vercel publish that directory. PDF receipts, screenshots, source API modules, tests and credentials are excluded. Personal local files are not deleted by the build.
-
-Run `npm test`, `npm run build`, and `npm run check:site` before deployment. GitHub Actions runs these on main and performs read-only production smoke checks every six hours. Review failed workflow runs; notification delivery depends on the owner's GitHub notification preferences. Scheduled checks do not submit contact messages or call the AI model.
-
 ## Hosting
 
-Netlify is the backend for `/api/*`. `netlify.toml` maps routes to bundled functions. Vercel rewrites those requests to the Netlify site while it continues serving the custom domain. Its deployment excludes local API functions to prevent conflicting runtimes.
+The Vercel project `surendra-koththigodas-projects/sri-lanka-travel` serves the website and every `/api/*` endpoint. The custom domain stays on Vercel. No proxy, form action, or runtime call depends on Netlify.
 
-Vercel remains the public host for the custom domain, as confirmed by the owner on 17 November 2026. Keep its domain and DNS configuration. Netlify APIs and Forms use the HTTPS netlify.app hostname; no DNS migration is required for this arrangement. The unused custom-domain configuration in Netlify reported incomplete propagation and an expired certificate on that date; it is not the endpoint used by the Vercel API rewrites.
+`npm run build` creates `dist/` from the explicit page list and referenced assets only. Vercel publishes that directory and separately bundles the functions in `api/`. Shared server code lives in `lib/`, outside public output and the API routing directory. Personal receipts, screenshots, tests and server source are excluded from static output.
 
-## Data and secrets
+`netlify.toml` only prevents future Git-triggered builds on the retired host. Existing deployments and historical Netlify Forms records are retained until verified migration/archival is complete; do not delete them casually. Old deployment snapshots and Git history may still contain previously published files.
 
-- Itinerary: `OPENAI_API_KEY`, optional `OPENAI_MODEL`, configured for Netlify Functions.
-- Contact: Netlify Forms `contact`; notification recipient must confirm the email from Netlify. The old email function is retained for compatibility but the public form does not depend on it.
-- Community updates: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `UPDATE_ADMIN_TOKEN`. Until persistent storage is configured, public reads are empty and new submissions are rejected with a contact-page alternative. No sample update is advertised as current.
-- Trusted feed: optional `LIVE_FEED_SOURCES`. A source outage must not clear other successfully loaded content. Only recent items are listed; news is not an official advisory.
+## Services and settings
+
+- Planner: `OPENAI_API_KEY` and optional `OPENAI_MODEL` in Vercel.
+- Private messages and community records: Vercel Blob **private** store, connected to the project. `BLOB_STORE_ID` is configured automatically. The SDK uses Vercel's short-lived OIDC authentication; no new long-lived storage key is needed. `BLOB_READ_WRITE_TOKEN` is supported for local development only if supplied securely.
+- Administration: existing `UPDATE_ADMIN_TOKEN`, sent only as the `x-admin-token` header. Visit `/admin-contacts.html` for messages or `/admin-updates.html` for moderation. The token is never saved in browser storage. Private APIs return `Cache-Control: private, no-store`.
+- Optional contact notifications: `RESEND_API_KEY`, `CONTACT_FROM_EMAIL` on a verified Resend domain, and `CONTACT_TO_EMAIL` (defaults to the owner's existing Gmail address). Save these in Vercel Production and redeploy to activate changed environment variables. Notifications are sent only after the message has been stored. A failed email does not lose the message; check the private inbox.
+- News: optional `LIVE_FEED_SOURCES`. A source outage must not clear other successfully loaded content. News is not an official advisory.
+- Legacy Supabase settings are no longer used for new data. Keep them until any historical records have been exported and checked; do not delete an old database as part of deployment.
+
+## Contact and data handling
+
+The form posts to `/api/contact` on the current origin, including without JavaScript. The server validates inputs and confirms success only after a durable private save. JavaScript retries use the same submission reference to avoid duplicate records and notifications. The no-JavaScript path redirects to `/contact.html?sent=1`. Messages are stored as individual private JSON records under `contacts/`. The inbox lists 20 at a time, newest first.
+
+The built-in per-instance contact throttle is a best-effort safeguard, not a distributed rate limiter. For high traffic or active spam, add a Vercel Firewall rate rule for POST `/api/contact` and `/api/update-submissions` and monitor usage. Blob is suitable for this small inbox and moderation queue; large-scale filtering should move to an indexed database. Community records are private under `updates/`; only approved, allowlisted fields appear publicly. Removal is a soft delete. Editing uses ETags to avoid overwriting concurrent moderation changes.
+
+## Verification
+
+Run `npm test`, `npm run build`, and `npm run check:site` before deployment. `npm run monitor` checks the live public pages, feeds, validation and admin authorization without sending emails or invoking the AI model. GitHub Actions runs the build checks on main and read-only production checks every six hours. Failure notifications depend on GitHub notification preferences.
+
+The Blob SDK's CLI configuration dependency pins an affected Zod version; a compatible v4 override selects the patched release. Keep this override until the upstream dependency is updated.
 
 ## Source handling
 
-New destination guides and entry guidance carry editorial dates and source links. Suggested stay lengths and transport times are estimates; attraction tariffs should be checked at the official provider rather than copied indefinitely. Review seasonal and entry information before each content refresh.
-
-Excluding personal documents from future deployments does not erase copies in historical Git commits or old deployment snapshots. Handle any historical cleanup separately, preserving a private backup and coordinating Git history changes with collaborators.
+Destination guides and entry guidance carry editorial dates and source links. Suggested stay lengths and transport times are estimates; verify attraction tariffs with the official provider. Excluding personal documents from current deployments does not erase historical Git or deployment copies. Handle historical cleanup separately, preserving a private backup.
