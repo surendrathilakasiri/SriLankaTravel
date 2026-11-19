@@ -89,7 +89,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 @media(max-width:420px){.planning-fields{grid-template-columns:1fr;}.logo{font-size:1.2rem;}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;} *,*::before,*::after{animation:none!important;transition:none!important;}.reveal{opacity:1!important;transform:none!important;}}
-
 /* Small, useful interactions; all primary content works without motion. */
 [hidden] { display:none!important; }
 html { scroll-padding-top:100px; }
